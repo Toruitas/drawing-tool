@@ -1,0 +1,29 @@
+{
+  "name": "drawing-tool",
+  "version": "1.0.0",
+  "description": "Final project for Msc Creative Coding 2. This project uses ReactJS as an interface for a WebGL and WebAssembly-based drawing tool.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel ./public/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Toruitas/drawing-tool.git"
+  },
+  "author": "Stuart Leitch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Toruitas/drawing-tool/issues"
+  },
+  "homepage": "https://github.com/Toruitas/drawing-tool#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.3.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-redux": "^7.2.0"
+  }
+}
