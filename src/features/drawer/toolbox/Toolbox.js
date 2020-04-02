@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styles from './Toolbox.module.css';
+import styles from './Toolbox.module.scss';
 import {
     // someImportedFn
 } from './toolboxSlice';
@@ -16,8 +16,9 @@ export function Toolbox(){
     const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <div className={styles.toolbox}>
+        <nav id="toolbox" className="panel">
+            <p className="panel-heading">Pick a tool</p>
             <Tool></Tool>
-        </div>
+        </nav>
     )
 }

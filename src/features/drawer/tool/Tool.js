@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styles from './Tool.module.css';
+import styles from './Tool.module.scss';
 import {
     // someImportedFn
 } from './toolSlice';
@@ -16,8 +16,11 @@ export function Tool(){
     const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <div className={styles.tool}>
-            
+        <div className="panel-block is-active">
+            <span className="panel-icon">
+            <i className="fas fa-mouse-pointer" aria-hidden="true"></i>
+            </span>
+            Select
         </div>
     )
 }

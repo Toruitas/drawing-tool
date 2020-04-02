@@ -1,0 +1,14 @@
+#toolbox{
+    position: absolute;
+    left:0;
+    top:5rem;
+}
+
+#toolbox.open{
+    width:6rem;
+}
+
+#toolbox.closed{
+    /* need to change side icon. */
+    width:1rem;
+}

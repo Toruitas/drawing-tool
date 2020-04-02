@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import styles from './Canvas.module.css';
+import styles from './Canvas.module.scss';
 import {} from "./canvasSlice.js";
 
 // This component will manage:
@@ -14,7 +14,10 @@ import {} from "./canvasSlice.js";
 
 // Notes on 
 
-class Canvas extends React.Component{
+// test shape
+
+
+export class Canvas extends React.Component{
     // https://reactjs.org/docs/react-component.html
     constructor(props){
         super(props);
@@ -23,11 +26,12 @@ class Canvas extends React.Component{
     }
 
     componentDidMount(){
+        // 
 
         
     }
 
-    handleEvent = (event) => {
+    handleEvent(event){
         // https://reactjs.org/docs/events.html
         if (event.type === "mousedown") {
                 this.setState({ message: "Mouse Down"});
@@ -55,9 +59,7 @@ class Canvas extends React.Component{
 
     render(){
         return (
-            <div>
-                <canvas id="gl-canvas"></canvas>
-            </div>
+            <canvas id="gl-canvas"></canvas>
         )
     }
 }
