@@ -15,7 +15,10 @@ import {} from "./canvasSlice.js";
 // Notes on 
 
 // test shape
-
+function rect(props){
+    const {ctx, x, y, width, height} = props;
+    ctx.fillRect(x, y, width, height);
+}
 
 export class Canvas extends React.Component{
     // https://reactjs.org/docs/react-component.html
@@ -26,9 +29,19 @@ export class Canvas extends React.Component{
     }
 
     componentDidMount(){
-        // 
+        this.updateCanvas();
+    }
 
-        
+    componentDidUpdate() {
+        this.updateCanvas();
+    }
+
+    updateCanvas() {
+        const ctx = this.refs.canvas.getContext('2d');
+        ctx.clearRect(0,0, 300, 300);
+        // draw children “components”
+        rect({ctx, x: 10, y: 10, width: 50, height: 50});
+        rect({ctx, x: 110, y: 110, width: 50, height: 50});
     }
 
     handleEvent(event){
@@ -53,13 +66,9 @@ export class Canvas extends React.Component{
         // Free draw: Draw segments between points. Segment length determines when a point is dropped. Need to monitor mouseup.
     }
 
-    updateCanvas(){
-
-    }
-
     render(){
         return (
-            <canvas id="gl-canvas"></canvas>
+            <canvas id="gl-canvas" ref="canvas" width={300} height={300}></canvas>
         )
     }
 }
