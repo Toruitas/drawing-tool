@@ -1,7 +1,8 @@
 #toolbox{
     position: absolute;
-    left:1rem;
-    top:7rem;
+    left:0.25rem;
+    top:3.5rem;
+    opacity: 1; // Start at 0.09 on mouseover, update to 1.0
 }
 
 #toolbox.open{

@@ -56,7 +56,9 @@ export class Canvas extends React.Component{
         
         this.canvas.current.width = this.state.width;
         this.canvas.current.height = this.state.height;
-        // todo: https://stackoverflow.com/questions/19014250/rerender-view-on-browser-resize-with-react
+
+        // todo LATER: scale when the objects on canvas exceed viewport size 
+        // https://www.pluralsight.com/guides/render-window-resize-react
 
         const ctx = this.canvas.current.getContext('2d');
         ctx.clearRect(0,0, this.canvas.current.width, this.canvas.current.height);
