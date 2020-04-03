@@ -14,24 +14,30 @@ import {} from "./canvasSlice.js";
 
 // Notes on 
 
-// test shape
+// test canvas rectangle shape
 function rect(props){
     const {ctx, x, y, width, height} = props;
     ctx.fillRect(x, y, width, height);
 }
 
+
+
 export class Canvas extends React.Component{
     // https://reactjs.org/docs/react-component.html
     constructor(props){
         super(props);
-        this.state = {width:0, height:0};
+        this.state = {width:0, height:0, canUseGL2:true};
         this.handleClick = this.handleClick.bind(this);
         this.updateDimensions = this.updateDimensions.bind(this);
         this.updateCanvas = this.updateCanvas.bind(this);
+        this.checkWebGL2Support = this.checkWebGL2Support.bind(this);
         this.canvas = React.createRef();
     }
 
     componentDidMount(){
+        // check for webgl support
+        
+        this.checkWebGL2Support();
         this.updateDimensions();
         this.updateCanvas();
         window.addEventListener('resize', this.updateDimensions);
@@ -44,6 +50,12 @@ export class Canvas extends React.Component{
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateDimensions);
       }
+
+    checkWebGL2Support(){
+        if (!this.canvas.current.getContext("webgl2")){
+            this.setState({canUseGL2:false});
+        }
+    }
 
     updateDimensions () {
         const rectangle = this.canvas.current.parentNode.getBoundingClientRect();
@@ -91,7 +103,15 @@ export class Canvas extends React.Component{
 
     render(){
         return (
-            <canvas id="gl-canvas" ref={this.canvas}></canvas>
+            <>
+                <canvas id="gl-canvas" ref={this.canvas}></canvas>
+                {this.state.canUseGL2 ? null: <div className="hero-body">
+                    <p className="container">
+                    Your browser doesn't support WebGL2. Please use a modern browser like
+                    Firefox or Chrome. Safari really is the new Internet Explorer.
+                    </p></div>
+                }
+            </>
         )
     }
 }
