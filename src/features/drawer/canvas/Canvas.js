@@ -24,26 +24,42 @@ export class Canvas extends React.Component{
     // https://reactjs.org/docs/react-component.html
     constructor(props){
         super(props);
-        this.state = {};
+        this.state = {width:0, height:0};
         this.handleClick = this.handleClick.bind(this);
+        this.updateDimensions = this.updateDimensions.bind(this);
+        this.updateCanvas = this.updateCanvas.bind(this);
+        this.canvas = React.createRef();
     }
 
     componentDidMount(){
+        this.updateDimensions();
         this.updateCanvas();
+        window.addEventListener('resize', this.updateDimensions);
     }
 
     componentDidUpdate() {
         this.updateCanvas();
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDimensions);
+      }
+
+    updateDimensions () {
+        const rectangle = this.canvas.current.parentNode.getBoundingClientRect();
+        this.setState({ width: rectangle.width, height:rectangle.height });
+      };
+
     updateCanvas() {
         // first reset h & w
-        https://stackoverflow.com/questions/30229536/how-to-make-a-html5-canvas-fit-dynamic-parent-flex-box-container
-        const rectangle = this.refs.canvas.parentNode.getBoundingClientRect();
-        this.refs.canvas.width = rectangle.width;
-        this.refs.canvas.height = rectangle.height;
-        const ctx = this.refs.canvas.getContext('2d');
-        ctx.clearRect(0,0, this.refs.canvas.width, this.refs.canvas.height);
+        // https://stackoverflow.com/questions/30229536/how-to-make-a-html5-canvas-fit-dynamic-parent-flex-box-container
+        
+        this.canvas.current.width = this.state.width;
+        this.canvas.current.height = this.state.height;
+        // todo: https://stackoverflow.com/questions/19014250/rerender-view-on-browser-resize-with-react
+
+        const ctx = this.canvas.current.getContext('2d');
+        ctx.clearRect(0,0, this.canvas.current.width, this.canvas.current.height);
         // draw children “components”
         rect({ctx, x: 10, y: 10, width: 50, height: 50});
         rect({ctx, x: 110, y: 110, width: 50, height: 50});
@@ -73,7 +89,7 @@ export class Canvas extends React.Component{
 
     render(){
         return (
-            <canvas id="gl-canvas" ref="canvas"></canvas>
+            <canvas id="gl-canvas" ref={this.canvas}></canvas>
         )
     }
 }
