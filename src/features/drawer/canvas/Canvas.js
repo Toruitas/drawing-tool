@@ -37,8 +37,13 @@ export class Canvas extends React.Component{
     }
 
     updateCanvas() {
+        // first reset h & w
+        https://stackoverflow.com/questions/30229536/how-to-make-a-html5-canvas-fit-dynamic-parent-flex-box-container
+        const rectangle = this.refs.canvas.parentNode.getBoundingClientRect();
+        this.refs.canvas.width = rectangle.width;
+        this.refs.canvas.height = rectangle.height;
         const ctx = this.refs.canvas.getContext('2d');
-        ctx.clearRect(0,0, 300, 300);
+        ctx.clearRect(0,0, this.refs.canvas.width, this.refs.canvas.height);
         // draw children “components”
         rect({ctx, x: 10, y: 10, width: 50, height: 50});
         rect({ctx, x: 110, y: 110, width: 50, height: 50});
@@ -68,7 +73,7 @@ export class Canvas extends React.Component{
 
     render(){
         return (
-            <canvas id="gl-canvas" ref="canvas" width={300} height={300}></canvas>
+            <canvas id="gl-canvas" ref="canvas"></canvas>
         )
     }
 }

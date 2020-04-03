@@ -10,13 +10,16 @@ import { Canvas } from "./canvas/Canvas";
 
 export function Drawer(){
     return (
-        <section className="hero is-fullheight-with-navbar"> 
-            <div className="hero-body">
-                <div className="container">
-                    <Canvas></Canvas>
-                </div>
-            </div>
-            <Toolbox></Toolbox>            
-        </section>
+        <div>
+            <section className="hero is-fullheight-with-navbar"> 
+                {/* <div className="hero-body">
+                    <div className="container"> */}
+                        <Canvas></Canvas>
+                    {/* </div> */}
+                {/* </div> */}
+                        
+            </section>
+            <Toolbox></Toolbox> 
+        </div> 
     )
 }
