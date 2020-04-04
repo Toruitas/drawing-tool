@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/Toruitas/drawing-tool#readme",
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "parcel-bundler": "^1.12.4",
     "sass": "^1.26.3"
   },
