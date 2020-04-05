@@ -16,6 +16,7 @@ export default (id) => {
     }
 
     GLM.init(gl);
+
     const vertices = [
         // x, y, z
         0.0, 0.5, 0.0,
@@ -24,6 +25,7 @@ export default (id) => {
     ];
 
     const indices = [0, 1, 2]; // first connects to second connects to third
+    
     const modelRender = new ModelRenderer();
     modelRender.registerNewModel(new ModelType(vertices, indices), "triangle");
     modelRender.addInstance('instance1', "triangle"); // in the future this will be used for tranformation and translation matrices

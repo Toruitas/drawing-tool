@@ -18,12 +18,12 @@ class GLManager {
     // float buffers
     bindArrayBuffer = (buffer) => this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
     unbindArrayBuffer = () => this.gl.bindBuffer(this.gl.ARRAY_BUFFER, null);
-    addArrayBufferData = (vertices) => this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl. STATIC_DRAW);
+    addArrayBufferData = (vertices) => this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
 
     // int buffers
     bindElementArrayBuffer = (buffer) => this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
     unbindElementArrayBuffer = () => this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
-    addElementArrayBufferData = (vertices) => this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(vertices), this.gl. STATIC_DRAW);
+    addElementArrayBufferData = (indices) => this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
 
     // shader functions
     createVertexShader = () => this.gl.createShader(this.gl.VERTEX_SHADER);
@@ -38,7 +38,6 @@ class GLManager {
 
     getAttribLocation = (program, attribute) => this.gl.getAttribLocation(program, attribute);
     enableVertexAttribArray = (attribute) => this.gl.enableVertexAttribArray(attribute);
-    // first arg is 
     pointToAttribute = (data, dimensions) => this.gl.vertexAttribPointer(data, dimensions, this.gl.FLOAT, false, 0, 0);
 
     drawTriangles = (noOfIndices) => this.gl.drawElements(this.gl.TRIANGLES, noOfIndices, this.gl.UNSIGNED_SHORT, 0);

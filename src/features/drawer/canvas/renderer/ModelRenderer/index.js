@@ -17,7 +17,7 @@ export default class ModelRenderer {
         }
     }
 
-    addInstance = (instance, id) => {
+    addInstance = (instance, id) =>{
         this.models[id].instances.push(instance);
     }
 
@@ -26,13 +26,13 @@ export default class ModelRenderer {
         GLM.depthTest(true); 
     }
 
-    // not to be confused with the react renderer
+    // not to be confused with a react renderer
     render = () => {
         this.preRender();
         this.shader.use();
         Object.keys(this.models).forEach(model => {
             this.models[model].type.use(this.shader);
-            this.models[model].instances.forEach(instace =>{
+            this.models[model].instances.forEach(instance =>{
                 GLM.drawTriangles(this.models[model].type.indices.length);
             })
         })
