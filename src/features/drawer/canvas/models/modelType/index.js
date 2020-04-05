@@ -4,6 +4,8 @@ export default class ModelType {
     constructor(vertices, indices){
         this.verticies = vertices;
         this.indices = indices;
+        this._genVertexBuffer();
+        this._genIndexBuffer();
     }
 
     _genVertexBuffer(){

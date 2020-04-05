@@ -277,7 +277,7 @@ export class Canvas extends React.Component{
     render(){
         return (
             <>
-                <canvas id="gl-canvas" ref={this.canvas}></canvas>
+                <canvas id="gl-canvas" ref={this.canvas} width="1354" height="614"></canvas>
                 {this.state.canUseGL2 ? null: <div className="hero-body">
                     <p className="container">
                     Your browser doesn't support WebGL2. Please use a modern browser like
