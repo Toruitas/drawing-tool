@@ -42,7 +42,8 @@ class GLManager {
 
     drawTriangles = (noOfIndices) => this.gl.drawElements(this.gl.TRIANGLES, noOfIndices, this.gl.UNSIGNED_SHORT, 0);
 
-
+    uploadMatrix4fv = (location, matrix) => this.gl.uniformMatrix4fv(location, false, matrix);
+    getUniformLocation = (program, uniform) => this.gl.getUniformLocation(program, uniform); 
 
 }
 
