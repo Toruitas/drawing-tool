@@ -21,6 +21,7 @@ export default class ModelShader {
 
         this.positionAttribute = GLM.getAttribLocation(program, Locations.POSITION);
         this.transformationMatrix = GLM.getUniformLocation(program, 'transformationMatrix');
+        this.resolutionUniform = GLM.getResolutionUniformLocation(program);
         this.program = program;
     }
 
@@ -30,10 +31,15 @@ export default class ModelShader {
 
     enablePosition = () => {
         GLM.enableVertexAttribArray(this.positionAttribute);
-        GLM.pointToAttribute(this.positionAttribute, 3); // 3 dimensions
+        GLM.pointToAttribute(this.positionAttribute, 3); // 3 (x,y,z) positions to draw 
     }
 
     enableTransformationMatrix = (matrix) => {
         GLM.uploadMatrix4fv(this.transformationMatrix, matrix);
     }
+
+    enablePixelCanvas = () =>{
+        GLM.uploadResolution2f(this.resolutionUniform);
+    }
+
 } 

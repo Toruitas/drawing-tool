@@ -11,6 +11,7 @@ Credit for a lot of my WebGL learning goes to the following resources:
 * https://github.com/jonathanrydholm/webgl-boilerplate
 * https://webglfundamentals.org
 
-And the following for Rust:
+And the following for Rust/WASM:
 * https://rustwasm.github.io/docs/book/game-of-life/introduction.html 
 * https://doc.rust-lang.org/book/ 
+* https://github.com/maxbittker/sandspiel 

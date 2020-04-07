@@ -30,6 +30,7 @@ export default class ModelRenderer {
     render = () => {
         this.preRender();
         this.shader.use();
+        this.shader.enablePixelCanvas();
         Object.keys(this.models).forEach(model => {
             this.models[model].type.use(this.shader);
             this.models[model].instances.forEach(instance =>{

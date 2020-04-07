@@ -18,11 +18,18 @@ export default (id) => {
 
     GLM.init(gl);
 
+    // const vertices = [
+    //     // x, y, z
+    //     0.0, 0.5, 0.0,
+    //     -0.5, -0.5, 0.0,
+    //     0.5, -0.5, 0.0
+    // ];
+
     const vertices = [
         // x, y, z
-        0.0, 0.5, 0.0,
-        -0.5, -0.5, 0.0,
-        0.5, -0.5, 0.0
+        0.0, 150.0, 0.0,
+        750.0, 50.0, 0.0,
+        150.0, 150.0, 0.0
     ];
 
     const indices = [0, 1, 2]; // first connects to second connects to third

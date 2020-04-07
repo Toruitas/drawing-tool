@@ -7,7 +7,7 @@ class GLManager {
 
     clear(r,g,b,a){
         this.gl.clearColor(r,g,b,a);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     }
 
     viewport = () => this.gl.viewport(0,0,this.gl.canvas.width, this.gl.canvas.height);
@@ -44,7 +44,8 @@ class GLManager {
 
     uploadMatrix4fv = (location, matrix) => this.gl.uniformMatrix4fv(location, false, matrix);
     getUniformLocation = (program, uniform) => this.gl.getUniformLocation(program, uniform); 
-
+    getResolutionUniformLocation = (program) => this.gl.getUniformLocation(program, "u_resolution")
+    uploadResolution2f = (resolutionLocation) => this.gl.uniform2f(resolutionLocation , this.gl.canvas.width, this.gl.canvas.height);
 }
 
 const GLM = new GLManager();
