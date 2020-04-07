@@ -12,6 +12,7 @@ export default class ModelInstance {
     }
 
     updateRotation = (rx, ry, rz) => {
+        // 1 = 180 degrees
         this.rx += rx;
         this.ry += ry;
         this.rz += rz;

@@ -41,8 +41,8 @@ export default (id) => {
 
     const render = () => {
         GLM.clear(1.0, 1.0, 1.0, 1.0);
-        instance.updateRotation(1, 1, 0);
-        instance.updatePosition(0.5, 0.05, 0);
+        instance.updateRotation(1, 0, 0);  
+        // instance.updatePosition(0.5, 0.05, 0);
         modelRender.render();
         window.requestAnimationFrame(render);
     }
