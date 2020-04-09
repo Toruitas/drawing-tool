@@ -15,22 +15,21 @@ import init from "./init";
 
 // Notes on 
 
-// test canvas rectangle shape
-function rect(props){
-    const {ctx, x, y, width, height} = props;
-    ctx.fillRect(x, y, width, height);
-}
-
-
-
 export class Canvas extends React.Component{
     // https://reactjs.org/docs/react-component.html
     constructor(props){
         super(props);
-        this.state = {width:0, height:0, canUseGL2:true};
+        this.state = {
+            width:0, 
+            height:0, 
+            transX:0,
+            transY:0,
+            canUseGL2:true
+        };
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
         this.updateDimensions = this.updateDimensions.bind(this);
+        this.reorientMousePos = this.reorientMousePos.bind(this);
         this.updateCanvas = this.updateCanvas.bind(this);
         this.checkWebGL2Support = this.checkWebGL2Support.bind(this);
         this.canvas = React.createRef();
@@ -62,8 +61,17 @@ export class Canvas extends React.Component{
     }
 
     updateDimensions () {
+        // Fullscreen the canvas
+        // Re-set the origin to the center of the screen
         const rectangle = this.canvas.current.parentNode.getBoundingClientRect();
-        this.setState({ width: rectangle.width, height:rectangle.height });
+        this.setState({
+             width: rectangle.width, 
+             height: rectangle.height, 
+             top: rectangle.top,
+             left: rectangle.left,
+             transX: rectangle.width * 0.5,
+             transY: rectangle.height * 0.5,
+             });
       };
 
     updateCanvas() {
@@ -76,17 +84,12 @@ export class Canvas extends React.Component{
         // todo LATER: scale when the objects on canvas exceed viewport size 
         // https://www.pluralsight.com/guides/render-window-resize-react
 
-        const ctx = this.canvas.current.getContext('webgl');
+        // const ctx = this.canvas.current.getContext('webgl');
         // ctx.clearRect(0,0, this.canvas.current.width, this.canvas.current.height);
         // draw children “components”
         // rect({ctx, x: 10, y: 10, width: 50, height: 50});
         // rect({ctx, x: 110, y: 110, width: 50, height: 50});
     }
-
-    handleEvent(event){
-        // https://reactjs.org/docs/events.html
-        
-       }
 
     handleMouseDown(event){
         // Gets coordinates
@@ -95,35 +98,31 @@ export class Canvas extends React.Component{
         // Select: Selects the top-most shape
         // Draw line segment: Start a line or end a line
         // Free draw: Draw segments between points. Segment length determines when a point is dropped. Need to monitor mouseup.
+        // https://stackoverflow.com/questions/42309715/how-to-correctly-pass-mouse-coordinates-to-webgl
         console.log(event.type);
-        // if (event.type === "mousedown") {
-        //     this.setState({ message: "Mouse Down"});
-        //     // https://stackoverflow.com/questions/42309715/how-to-correctly-pass-mouse-coordinates-to-webgl
-        //     var x = event.offsetX;
-        //     var y = event.offsetY;
-        // } 
-        // if (event.type === "mouseup") {
-        //         this.setState({ message: "Mouse Up"});
-        // }
+        let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY)
+        console.log(adjusted_coords);
     }
 
     handleMouseUp(event){
-        // Gets coordinates
-        // Checks tool from Redux
-        // performs action relevant to tool
-        // Select: Selects the top-most shape
-        // Draw line segment: Start a line or end a line
-        // Free draw: Draw segments between points. Segment length determines when a point is dropped. Need to monitor mouseup.
         console.log(event.type);
-        // if (event.type === "mousedown") {
-        //     this.setState({ message: "Mouse Down"});
-        //     // https://stackoverflow.com/questions/42309715/how-to-correctly-pass-mouse-coordinates-to-webgl
-        //     var x = event.offsetX;
-        //     var y = event.offsetY;
-        // } 
-        // if (event.type === "mouseup") {
-        //         this.setState({ message: "Mouse Up"});
-        // }
+        let x = event.nativeEvent.offsetX;
+        let y = event.nativeEvent.offsetY;
+        console.log(x,y); 
+    }
+
+    handleMouseMove(event){
+        let x = event.nativeEvent.offsetX;
+        let y = event.nativeEvent.offsetY;
+    }
+
+    reorientMousePos(x,y){
+        // This method takes an (x,y) position in the canvas and converts it relative to the 
+        //canvas orgin in the center of the screen
+        return {
+            x: x - this.state.left - this.state.transX,
+            y: (y - this.state.top - this.state.transY)*-1
+        }
     }
 
 
@@ -132,7 +131,8 @@ export class Canvas extends React.Component{
             <>
                 <canvas id="gl-canvas" ref={this.canvas} width="1354" height="614" 
                     onMouseDown={this.handleMouseDown}
-                    onMouseUp={this.handleMouseUp}></canvas>
+                    onMouseUp={this.handleMouseUp}
+                    onMouseMove={this.handleMouseMove}></canvas>
                 {this.state.canUseGL2 ? null: <div className="hero-body">
                     <p className="container">
                     Your browser doesn't support WebGL2. Please use a modern browser like
