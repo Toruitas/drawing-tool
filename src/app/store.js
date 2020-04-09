@@ -1,8 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import logger from 'redux-logger'
+// import counterReducer from '../features/counter/counterSlice';
+import toolReducer from "../features/drawer/tool/toolSlice";
+
 
 export default configureStore({
   reducer: {
-    counter: counterReducer,
+    tool: toolReducer,
   },
+  middleware:[...getDefaultMiddleware(), logger]
 });

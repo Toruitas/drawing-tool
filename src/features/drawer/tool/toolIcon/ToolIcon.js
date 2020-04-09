@@ -11,9 +11,10 @@ export default function ToolIcon({toolName}){
     return (
         <span className="panel-icon">
             {
-                {select: <i className="fas fa-mouse-pointer" aria-hidden="true"></i>,
+                {
+                    select: <i className="fas fa-mouse-pointer" aria-hidden="true"></i>,
                     rect: <i className="fas fa-vector-square" aria-hidden="true"></i>,
-                    line: <i class="fas fa-minus" aria-hidden="true"></i>
+                    line: <i className="fas fa-minus" aria-hidden="true"></i>
                 }[toolName]
         }
         </span>
