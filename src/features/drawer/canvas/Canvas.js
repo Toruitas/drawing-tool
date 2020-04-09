@@ -67,8 +67,6 @@ export class Canvas extends React.Component{
         this.setState({
              width: rectangle.width, 
              height: rectangle.height, 
-             top: rectangle.top,
-             left: rectangle.left,
              transX: rectangle.width * 0.5,
              transY: rectangle.height * 0.5,
              });
@@ -120,8 +118,8 @@ export class Canvas extends React.Component{
         // This method takes an (x,y) position in the canvas and converts it relative to the 
         //canvas orgin in the center of the screen
         return {
-            x: x - this.state.left - this.state.transX,
-            y: (y - this.state.top - this.state.transY)*-1
+            x: x - this.state.transX,
+            y: (y  - this.state.transY)*-1
         }
     }
 
@@ -129,7 +127,7 @@ export class Canvas extends React.Component{
     render(){
         return (
             <>
-                <canvas id="gl-canvas" ref={this.canvas} width="1354" height="614" 
+                <canvas id="gl-canvas" ref={this.canvas} width="1354" height="50" 
                     onMouseDown={this.handleMouseDown}
                     onMouseUp={this.handleMouseUp}
                     onMouseMove={this.handleMouseMove}></canvas>
