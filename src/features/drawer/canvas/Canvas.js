@@ -1,7 +1,8 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, {Component} from 'react';
+import { connect } from 'react-redux';
 import styles from './Canvas.module.scss';
 import {} from "./canvasSlice.js";
+import { selectSelectedTool, selectMinVertices, selectMaxVertices} from "../tool/toolSlice";
 import init from "./init";
 
 // This component will manage:
@@ -15,7 +16,7 @@ import init from "./init";
 
 // Notes on 
 
-export class Canvas extends React.Component{
+class Canvas extends Component{
     // https://reactjs.org/docs/react-component.html
     constructor(props){
         super(props);
@@ -24,7 +25,7 @@ export class Canvas extends React.Component{
             height:0, 
             transX:0,
             transY:0,
-            canUseGL2:true
+            canUseGL2:true,
         };
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -95,6 +96,7 @@ export class Canvas extends React.Component{
         // Free draw: Draw segments between points. Segment length determines when a point is dropped. Need to monitor mouseup.
         // https://stackoverflow.com/questions/42309715/how-to-correctly-pass-mouse-coordinates-to-webgl
         let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY)
+        console.log(this.props.tool);
     }
 
     handleMouseUp(event){
@@ -131,4 +133,14 @@ export class Canvas extends React.Component{
             </>
         )
     }
-}
+};
+
+const mapStateToProps = state => {
+    return {
+        tool: selectSelectedTool(state),
+        minVertices: selectMinVertices(state),
+        maxVertices: selectMaxVertices(state)
+    }
+};
+
+export default connect(mapStateToProps, null)(Canvas);
