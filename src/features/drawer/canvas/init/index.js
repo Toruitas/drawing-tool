@@ -27,22 +27,24 @@ export default (id) => {
 
     const vertices = [
         // x, y, z
-        0.0, 150.0, 0.0,
-        75.0, 50.0, 0.0,
-        150.0, 150.0, 0.0
+        -75.0, -75.0, 0.0,
+        0.0, 75.0, 0.0,
+        75.0, -75.0, 0.0
     ];
 
     const indices = [0, 1, 2]; // first connects to second connects to third
 
     const modelRender = new ModelRenderer();
     modelRender.registerNewModel(new ModelType(vertices, indices), "triangle");
-    const instance = new ModelInstance(0, 0, 0, 0, 0, 0, 1.0, gl.canvas.width, gl.canvas.height);
+    const instance = new ModelInstance(0, 0, 0, 150, 150, 0, 1.0, gl.canvas.width, gl.canvas.height);
     modelRender.addInstance(instance, 'triangle');
+    // const instance2 = new ModelInstance(100, 100, 0, 180, 0, 0, 1.0, gl.canvas.width, gl.canvas.height);
+    // modelRender.addInstance(instance2, 'triangle');
 
     const render = () => {
         GLM.clear(1.0, 1.0, 1.0, 1.0);
-        instance.updateRotation(0, 180, 0);  
-        instance.updatePosition(500, 300, 0);
+        // instance.updateRotation(0, 0, 0);  
+        // instance.updatePosition(500, 300, 0);
         modelRender.render();
         window.requestAnimationFrame(render);
     }

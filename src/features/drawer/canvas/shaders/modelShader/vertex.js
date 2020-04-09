@@ -25,7 +25,7 @@ export default `
         // gl_Position = vec4(clipSpace, 0, 1);
 
         color = ${Locations.POSITION};
-        gl_Position = transformationMatrix * vec4(zeroToOne* vec2(1, -1), 0.0, 1.0);
+        gl_Position = transformationMatrix * vec4(zeroToOne, 0.0, 1.0);
 
         
     }

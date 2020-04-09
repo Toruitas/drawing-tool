@@ -14,11 +14,12 @@ export default class ModelInstance {
         this.width = width;
         this.height = height;
         this.scale = scale;
+        this.updateTransformationMatrix();  // transforamation matrix can't be null
     }
 
     degreeToClip = (degree) => {
         // a clipspace rotation of 1 = 1 radian = 180*        
-        return degree/180;
+        return (degree * Math.PI/180)%360;
     }
 
     pixelToClip = (pixelPos, dimension) =>{
