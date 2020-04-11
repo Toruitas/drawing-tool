@@ -25,12 +25,12 @@ To explore using `wasm-bindgen` and Rust, I followed [this tutorial](https://rus
 
 I also lost one day of work on the project, but that didn't take long to re-create and push to the repo this README belongs to. I used a 10-year old Dell laptop for the 15 days it took to get a replacement drive to get my proper MSI work machine back in action. Major kudos to Microsoft. VSCode is so lightweight that on a 10-year old laptop it still runs smooth as butter.
 
-
+I've shifted the plan from most WebGL code in WASM to putting it in JS, after discovering that no matter whether I use Rust or C-based WASM, it has no direct interface with WebGL. It must go through JS to interface in both cases. 
 
 
 Credit for a lot of my WebGL learning goes to the following resources:
 * https://github.com/jonathanrydholm/webgl-boilerplate
-* https://webglfundamentals.org
+* https://webglfundamentals.org & https://webgl2fundamentals.org 
 
 And the following for Rust/WASM:
 * https://rustwasm.github.io/docs/book/game-of-life/introduction.html 
