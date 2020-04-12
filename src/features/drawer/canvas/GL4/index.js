@@ -109,6 +109,18 @@ export default class WglRunner{
                 var offset = 0;
                 var count = 6;
                 gl.drawArrays(primitiveType, offset, count);
+            }else if (drawnObj.tool==="triangle"){
+                this.setTriangle(
+                    gl, ...drawnObj.pos);
+        
+                // Set a random color.
+                gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        
+                // Draw the rectangle.
+                var primitiveType = gl.TRIANGLES;
+                var offset = 0;
+                var count = 3;
+                gl.drawArrays(primitiveType, offset, count);
             }
         })
     }
@@ -134,7 +146,15 @@ export default class WglRunner{
         ]), gl.STATIC_DRAW);
     };
 
-    setLine(gl, x1, y1, x2, y2, context){
-        // context is likely to just be width
+    setTriangle(gl, x1, y1, x2, y2, x3, y3){
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            x1, y1,
+            x2, y2,
+            x3, y3
+        ]), gl.STATIC_DRAW);
+    };
+
+    setLine(gl, x1, y1, x2, y2,context){
+
     };
 }

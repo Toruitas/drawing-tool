@@ -83,6 +83,10 @@ class Canvas extends Component{
                 tool:"rect",
                 pos:[100,100,400,400]
             },
+            {
+                tool:"triangle",
+                pos:[0,0, 0,-500, -500, -500]
+            }
         ]
         let wglRunner = new WglRunner(id, dummyState);
         wglRunner.renderCanvas();
