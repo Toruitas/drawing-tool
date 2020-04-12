@@ -5,9 +5,7 @@ import {} from "./canvasSlice.js";
 import { selectSelectedTool, selectMinVertices, selectMaxVertices} from "../tool/toolSlice";
 // import init from "./GL1/.init";
 // import init from "./GL2F1/gl2f1";
-import {webglUtils} from "./GL2F1/webgl-utils";
-
-
+import WglRunner from "./GL4";
 // This component will manage:
 // Click events
 // Communication with WASM
@@ -35,9 +33,10 @@ class Canvas extends Component{
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.updateDimensions = this.updateDimensions.bind(this);
         this.reorientMousePos = this.reorientMousePos.bind(this);
-        this.updateCanvas = this.updateCanvas.bind(this);
+        this.updateCanvasSize = this.updateCanvasSize.bind(this);
         this.checkWebGL2Support = this.checkWebGL2Support.bind(this);
         this.renderCanvas = this.renderCanvas.bind(this);
+        this.renderCanvasMonolithic = this.renderCanvasMonolithic.bind(this);
         this.setRectangle = this.setRectangle.bind(this);
         this.randomInt = this.randomInt.bind(this);
         this.canvas = React.createRef();
@@ -49,13 +48,14 @@ class Canvas extends Component{
         this.updateDimensions();
         // init('gl-canvas');
         window.addEventListener('resize', this.updateDimensions);
-        this.renderCanvas();
-
+        // this.renderCanvasMonolithic();
+        this.renderCanvas('gl-canvas');
     }
 
     componentDidUpdate() {
-        this.updateCanvas();
-        this.renderCanvas();
+        this.updateCanvasSize();
+        // this.renderCanvasMonolithic();
+        this.renderCanvas('gl-canvas');
     }
 
     componentWillUnmount() {
@@ -68,7 +68,27 @@ class Canvas extends Component{
         }
     }
 
-    renderCanvas(){
+    renderCanvas(id){
+        // First, init the WebGL Manager
+        // For each {shape, coodinates, context} group in the list of shapes
+        // Use an enum or dict to determine which drawing fn to use based on supplied variables. 
+        // Something like: {shape: function(dimensions, context),}
+        // This inner fn will useProgram 
+        let dummyState = [
+            {
+                tool:"rect",
+                pos:[0,0,300,300]
+            },
+            {
+                tool:"rect",
+                pos:[100,100,400,400]
+            },
+        ]
+        let wglRunner = new WglRunner(id, dummyState);
+        wglRunner.renderCanvas();
+    }
+
+    renderCanvasMonolithic(){
         let canvas = this.canvas.current;
         let gl = canvas.getContext("webgl2");
         if (!gl) {
@@ -90,12 +110,6 @@ class Canvas extends Component{
         // convert the position from pixels to 0.0 to 1.0
         vec2 zeroToOne = a_position / u_resolution;
 
-        // convert from 0->1 to 0->2
-        // vec2 zeroToTwo = zeroToOne * 2.0;
-
-        // convert from 0->2 to -1->+1 (clipspace)
-        // vec2 clipSpace = zeroToTwo - 1.0;
-
         gl_Position = vec4(zeroToOne, 0, 1);
         }
         `;
@@ -115,19 +129,20 @@ class Canvas extends Component{
         `;
 
         // Use our boilerplate utils to compile the shaders and link into a program
-        var program = webglUtils.createProgramFromSources(gl,
-            [vertexShaderSource, fragmentShaderSource]);
+        // var program = webglUtils.createProgramFromSources(gl,
+        //     [vertexShaderSource, fragmentShaderSource]);
+        
 
         // look up where the vertex data needs to go.
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
 
         // look up uniform locations
-        var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-        var colorLocation = gl.getUniformLocation(program, "u_color");
+        // var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+        // var colorLocation = gl.getUniformLocation(program, "u_color");
 
         // Create a buffer
         var positionBuffer = gl.createBuffer();
-
+        
         // Create a vertex array object (attribute state)
         var vao = gl.createVertexArray();
 
@@ -141,7 +156,7 @@ class Canvas extends Component{
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-        var size = 2;          // 2 components per iteration
+        var size = 2;          // 2 components per iteration for 2-d xy
         var type = gl.FLOAT;   // the data is 32bit floats
         var normalize = false; // don't normalize the data
         var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
@@ -151,13 +166,14 @@ class Canvas extends Component{
 
         //   webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
+        // ################################################
+        // Draw loop below.
         // Tell WebGL how to convert from clip space to pixels
-        let viewport = gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         // Clear the canvas
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        console.log("cleared canvas");
 
         // Tell it to use our program (pair of shaders)
         gl.useProgram(program);
@@ -196,21 +212,20 @@ class Canvas extends Component{
       }
       
       // Fill the buffer with the values that define a rectangle.
-    setRectangle(gl, x, y, width, height) {
-        var x1 = x;
-        var x2 = x + width;
-        var y1 = y;
-        var y2 = y + height;
+    setRectangle(gl, x1, y1, x2, y2) {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-           x1, y1,
-           x2, y1,
-           x1, y2,
-           x1, y2,
-           x2, y1,
-           x2, y2,
+            x1, y1,
+            x2, y1,
+            x1, y2,
+            x1, y2,
+            x2, y1,
+            x2, y2,
         ]), gl.STATIC_DRAW);
-        console.log("you get a rectangle at ",x, y, width, height);
-      }
+    }
+    
+    setLine(gl, x1, y1, x2, y2, context){
+        // context is likely to just be width
+    }
 
     updateDimensions () {
         // Fullscreen the canvas
@@ -225,7 +240,7 @@ class Canvas extends Component{
              });
       };
 
-    updateCanvas() {
+    updateCanvasSize() {
         // first reset h & w
         // https://stackoverflow.com/questions/30229536/how-to-make-a-html5-canvas-fit-dynamic-parent-flex-box-container
         

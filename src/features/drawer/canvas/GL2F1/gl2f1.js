@@ -1,3 +1,4 @@
+import {twgl} from "twgl.js";
 
 var vertexShaderSource = `#version 300 es
 
@@ -48,8 +49,10 @@ export default function init(id) {
   }
 
   // Use our boilerplate utils to compile the shaders and link into a program
-  var program = webglUtils.createProgramFromSources(gl,
-      [vertexShaderSource, fragmentShaderSource]);
+  // var program = webglUtils.createProgramFromSources(gl,
+  //     [vertexShaderSource, fragmentShaderSource]);
+  let programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
+  let program = programInfo.program;
 
   // look up where the vertex data needs to go.
   var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
