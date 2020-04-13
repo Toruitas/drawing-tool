@@ -1,8 +1,8 @@
 import {webglUtils} from "./webgl-utils";
 
 export default class WglRunner{
-    constructor(id, stateToRender){
-        this.id = id;
+    constructor(gl, stateToRender){
+        this.gl = gl;
         this.stateToRender = stateToRender;
         this.vertexShaderSource = `#version 300 es
 
@@ -39,11 +39,11 @@ export default class WglRunner{
     }
 
     renderCanvas(){
-        let canvas = document.querySelector(`#${this.id}`);
-        let gl = canvas.getContext("webgl2");
-        if (!gl) {
-            return;
-        }
+        // let canvas = document.querySelector(`#${this.id}`);
+        let gl = this.gl;
+        // if (!gl) {
+        //     return;
+        // }
         // currently we only have 1 program
         let program = webglUtils.createProgramFromSources(gl,
             [this.vertexShaderSource, this.fragmentShaderSource]);
