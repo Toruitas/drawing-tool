@@ -224,7 +224,7 @@ class Canvas extends Component{
                     </canvas>
                 {this.state.canUseGL2 ? null: <div className="hero-body">
                     <p className="container">
-                    Your browser doesn't support WebGL. Please use a modern browser like
+                    Your browser doesn't support WebGL 2. Please use a modern browser like
                     Firefox or Chrome. Safari really is the new Internet Explorer.
                     </p></div>
                 }

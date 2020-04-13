@@ -27,7 +27,15 @@ I also lost one day of work on the project, but that didn't take long to re-crea
 
 I've shifted the plan from most WebGL code in WASM to putting it in JS, after discovering that no matter whether I use Rust or C-based WASM, it has no direct interface with WebGL. It must go through JS to interface in both cases. 
 
-The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into local state, only to realize the bug was elsewhere!
+The structure of the project is a simple React-Redux project. The Toolbox component on the side is a component which contains Tools. Each tool is a component which connects to the Redux store to let the entire project know which tool is being selected and how many vertices that tool should be used to draw. 
+
+The Canvas component can read the Redux state, and behave appropriately when a user clicks on the canvas.
+
+It was a struggle to comprehend how to draw multiple user-drawn shapes with WebGL. What it came down to is that the ENTIRE WebGL program has to be re-initialized and re-rendered every single time the state updates. This is very very fast, so it's really not a problem at all.
+
+The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into local state, only to realize the bug was elsewhere, and there was never a problem copying the string in the first place.
+
+
 
 
 Credit for a lot of my WebGL learning goes to the following resources:

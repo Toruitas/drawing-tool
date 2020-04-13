@@ -102,29 +102,9 @@ export default class WglRunner{
         if (this.stateToRender.length > 0){
             this.stateToRender.forEach(drawnObj => {
                 if (drawnObj.tool==="rect"){
-                    this.setRectangle(
-                        gl, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
-            
-                    // Set a random color.
-                    gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
-            
-                    // Draw the rectangle.
-                    var primitiveType = gl.TRIANGLES;
-                    var offset = 0;
-                    var count = 6;
-                    gl.drawArrays(primitiveType, offset, count);
+                    this.setRectangle(gl,colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
                 }else if (drawnObj.tool==="triangle"){
-                    this.setTriangle(
-                        gl, ...drawnObj.pos);
-            
-                    // Set a random color.
-                    gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
-            
-                    // Draw the rectangle.
-                    var primitiveType = gl.TRIANGLES;
-                    var offset = 0;
-                    var count = 3;
-                    gl.drawArrays(primitiveType, offset, count);
+                    this.setTriangle(gl,colorLocation, drawnObj.pos[0], drawnObj[2],drawnObj[3]);
                 }
             })
         }
@@ -141,7 +121,7 @@ export default class WglRunner{
     };
 
     // Fill the buffer with the values that define a rectangle.
-    setRectangle(gl, x1, y1, x2, y2) {
+    setRectangle(gl, colorLocation, x1, y1, x2, y2, context={}) {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
             x1, y1,
             x2, y1,
@@ -150,18 +130,42 @@ export default class WglRunner{
             x2, y1,
             x2, y2,
         ]), gl.STATIC_DRAW);
+
+        // Set a random color.
+        gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+            
+        // Draw the rectangle.
+        var primitiveType = gl.TRIANGLES;
+        var offset = 0;
+        var count = 6;
+        gl.drawArrays(primitiveType, offset, count);
     };
 
-    setTriangle(gl, x1, y1, x2, y2, x3, y3){
+    setTriangle(gl, colorLocation, x1, y1, x2, y2, x3, y3, context={}){
         // Triangle must first draw a line from x1,y1 to x2,y2 before can draw a full triangle.
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
             x1, y1,
             x2, y2,
             x3, y3
         ]), gl.STATIC_DRAW);
+
+        // Set a random color.
+        gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+            
+        // Draw the rectangle.
+        var primitiveType = gl.TRIANGLES;
+        var offset = 0;
+        var count = 3;
+        gl.drawArrays(primitiveType, offset, count);
     };
 
-    setLine(gl, x1, y1, x2, y2,context){
+    setLine(gl, x1, y1, x2, y2, context={}){
+        // https://community.khronos.org/t/simple-tutorial-needed-how-to-draw-a-line/2664/4
+        // https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm
+
+    };
+
+    setFreeDraw(gl, vertices, context={}){
 
     };
 }
