@@ -1,7 +1,7 @@
 import {webglUtils} from "./webgl-utils";
 
 export default class WglRunner{
-    constructor(gl, stateToRender){
+    constructor(gl, stateToRender={}){
         this.gl = gl;
         this.stateToRender = stateToRender;
         this.vertexShaderSource = `#version 300 es
@@ -96,33 +96,36 @@ export default class WglRunner{
         // pixels to clipspace in the shader
         gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-        this.stateToRender.forEach(drawnObj => {
-            if (drawnObj.tool==="rect"){
-                this.setRectangle(
-                    gl, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
+        if (this.stateToRender.length > 0){
+            this.stateToRender.forEach(drawnObj => {
+                if (drawnObj.tool==="rect"){
+                    this.setRectangle(
+                        gl, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
+            
+                    // Set a random color.
+                    gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+            
+                    // Draw the rectangle.
+                    var primitiveType = gl.TRIANGLES;
+                    var offset = 0;
+                    var count = 6;
+                    gl.drawArrays(primitiveType, offset, count);
+                }else if (drawnObj.tool==="triangle"){
+                    this.setTriangle(
+                        gl, ...drawnObj.pos);
+            
+                    // Set a random color.
+                    gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+            
+                    // Draw the rectangle.
+                    var primitiveType = gl.TRIANGLES;
+                    var offset = 0;
+                    var count = 3;
+                    gl.drawArrays(primitiveType, offset, count);
+                }
+            })
+        }
         
-                // Set a random color.
-                gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
-        
-                // Draw the rectangle.
-                var primitiveType = gl.TRIANGLES;
-                var offset = 0;
-                var count = 6;
-                gl.drawArrays(primitiveType, offset, count);
-            }else if (drawnObj.tool==="triangle"){
-                this.setTriangle(
-                    gl, ...drawnObj.pos);
-        
-                // Set a random color.
-                gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
-        
-                // Draw the rectangle.
-                var primitiveType = gl.TRIANGLES;
-                var offset = 0;
-                var count = 3;
-                gl.drawArrays(primitiveType, offset, count);
-            }
-        })
     }
 
     randomInt(range) {
@@ -147,6 +150,7 @@ export default class WglRunner{
     };
 
     setTriangle(gl, x1, y1, x2, y2, x3, y3){
+        // Triangle must first draw a line from x1,y1 to x2,y2 before can draw a full triangle.
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
             x1, y1,
             x2, y2,

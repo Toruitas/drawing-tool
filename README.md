@@ -27,6 +27,8 @@ I also lost one day of work on the project, but that didn't take long to re-crea
 
 I've shifted the plan from most WebGL code in WASM to putting it in JS, after discovering that no matter whether I use Rust or C-based WASM, it has no direct interface with WebGL. It must go through JS to interface in both cases. 
 
+The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into local state, only to realize the bug was elsewhere!
+
 
 Credit for a lot of my WebGL learning goes to the following resources:
 * https://github.com/jonathanrydholm/webgl-boilerplate

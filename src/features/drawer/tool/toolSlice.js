@@ -12,12 +12,10 @@ export const slice = createSlice({
         let toolToSelect = action.payload;
         state.tool = toolToSelect;
         if (toolToSelect === "line" || toolToSelect === "rect"){
-            state.minVertices = 2;
-            state.maxVertices = 2;
+            state.vertices = 2;
         }
         if (toolToSelect === "select"){
-            state.minVertices = 0;
-            state.maxVertices = 0;
+            state.vertices = 0;
         }
     }
     // selectSelectTool: state =>{
@@ -61,7 +59,6 @@ export const { selectATool } = slice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state) => state.counter.value)`
 export const selectSelectedTool = state => state.tool.tool;
-export const selectMinVertices = state => state.tool.minVertices;
-export const selectMaxVertices = state => state.tool.maxVertices;
+export const selectVertices = state => state.tool.vertices;
 
 export default slice.reducer;
