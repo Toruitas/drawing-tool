@@ -16,10 +16,13 @@ export default class WglRunner{
         // all shaders have a main function
         void main() {
 
-            // convert the position from pixels to 0.0 to 1.0
+            // convert the position from pixels to 0.0 to 2.0
             vec2 zeroToOne = a_position / u_resolution;
 
-            gl_Position = vec4(zeroToOne, 0, 1);
+            // convert from 0->1 to 0->2
+            vec2 zeroToTwo = zeroToOne * 2.0;
+
+            gl_Position = vec4(zeroToTwo, 0, 1);
         }
         `;
 
@@ -80,7 +83,7 @@ export default class WglRunner{
         // Draw loop below.
         // Tell WebGL how to convert from clip space to pixels
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        //   webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+        webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
         // Clear the canvas
         gl.clearColor(0, 0, 0, 0);

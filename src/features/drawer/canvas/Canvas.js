@@ -15,14 +15,6 @@ import WglRunner from "./GL4";
 
 // Click events may go to Rust, may go directly to WebGL. 
 
-// Notes on 
-
-// Enum because Redux won't let me extract a string copy
-const TOOLNAMES = Object.freeze({
-    select: "select",
-    line: "line",
-    rect: "rect"
-})
 
 class Canvas extends Component{
     // https://reactjs.org/docs/react-component.html
@@ -80,10 +72,9 @@ class Canvas extends Component{
             // get full list of saved shapes
             let stateToRender = this.state.stateToRender.slice();
             // if we're currently drawing something, we want the temporary shape as it's dragged around
-            let tool = TOOLNAMES[this.props.tool];
             if (this.state.currentlyDrawing && this.state.currentlyDrawingShape != {}){
                 stateToRender.push({
-                    tool:tool,
+                    tool:this.props.tool,
                     pos: this.state.currentlyDrawingShape.tempPos
                 });
             }
@@ -124,41 +115,7 @@ class Canvas extends Component{
     }
 
     handleMouseDown(event){
-        // Gets coordinates
-        // Checks tool from Redux
-        // performs action relevant to tool
-        // Select: Selects the top-most shape
-        // Draw line segment: Start a line or end a line
-        // Free draw: Draw segments between points. Segment length determines when a point is dropped. Need to monitor mouseup.
-        // https://stackoverflow.com/questions/42309715/how-to-correctly-pass-mouse-coordinates-to-webgl
-        // let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY);
-        // if (this.props.tool === "select"){
-        //     console.log("Replace this with a test for withinShape()")
-        // } else if (
-        //     !this.state.currentlyDrawing &&
-        //     ( 
-        //         this.props.tool === "rect" || 
-        //         this.props.tool === "line" 
-        //     )
-        //     ){
-        //     // start drawing by setting the first anchor/vertex.
-        //     this.setState({
-        //         currentlyDrawing:true,
-        //         currentlyDrawingShape:{
-        //             tool: this.props.tool,
-        //             pos:[
-        //                 adjusted_coords.x,
-        //                 adjusted_coords.y
-        //             ],
-        //             savedPos:[
-        //                 adjusted_coords.x,
-        //                 adjusted_coords.y
-        //             ]
-        //         }
-        //     });
-        // }else{
-        //     console.log(adjusted_coords);
-        // }
+        
     }
 
     handleMouseUp(event){
@@ -166,7 +123,6 @@ class Canvas extends Component{
         // reset currentlyDrawing to an empty obj
         // Move tempPos to savedPos. Add to 
         let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY);
-        let tool = TOOLNAMES[this.props.tool]
         if (this.props.tool === "select"){
             // Select what is being clicked.
             console.log("Replace this with a test for withinShape()")
@@ -235,7 +191,6 @@ class Canvas extends Component{
             let tempPos = this.state.currentlyDrawingShape.pos.slice(0);
             // add the temporary coordinates
             tempPos.push(adjusted_coords.x, adjusted_coords.y);
-            let tool = TOOLNAMES[this.props.tool]
             // update the state
             this.setState({
                 currentlyDrawingShape:{
