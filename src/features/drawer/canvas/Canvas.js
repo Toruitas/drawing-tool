@@ -130,7 +130,8 @@ class Canvas extends Component{
             !this.state.currentlyDrawing &&
             ( 
                 this.props.tool === "rect" || 
-                this.props.tool === "line" 
+                this.props.tool === "line" ||
+                this.props.tool === "ellipse"
             )
             ){
             // start drawing by setting the first anchor/vertex.
@@ -155,9 +156,9 @@ class Canvas extends Component{
             // if current length == max vertices, end the draw as the shape is complete
             // so we add the shape we just drew to the list of saved shapes
             // and clear the shape we're currently drawing.
-            // 2 vertices * 2 xy coords
-            if (savedPos.length>=this.props.selectVertices*2){
-                let newShapesToDrawList = this.state.stateToRender.slice(0);
+            
+            if (savedPos.length>=this.props.selectVertices*2){ // 2 vertices * 2 xy coords
+                let newShapesToDrawList = this.state.stateToRender.slice(0);  // copy the stateToRender rather than a ref
                 newShapesToDrawList.push({
                     tool:this.props.tool,
                     pos: savedPos
@@ -188,7 +189,7 @@ class Canvas extends Component{
         // This is agnostic to whichever drawing tool is selected.
         if (this.state.currentlyDrawing){
             // get the saved coordinates
-            let tempPos = this.state.currentlyDrawingShape.pos.slice(0);
+            let tempPos = this.state.currentlyDrawingShape.pos.slice(0);  // get a copy not a ref
             // add the temporary coordinates
             tempPos.push(adjusted_coords.x, adjusted_coords.y);
             // update the state

@@ -16,6 +16,8 @@ export function Toolbox(){
             <Tool toolName={"select"}></Tool>
             <Tool toolName={"line"}></Tool>
             <Tool toolName={"rect"}></Tool>
+            <Tool toolName={"ellipse"}></Tool>
+            {/* todo: add a CLEAR tool which then re-selects the last tool. */}
         </nav>
     )
 }

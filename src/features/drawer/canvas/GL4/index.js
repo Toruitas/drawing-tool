@@ -102,9 +102,13 @@ export default class WglRunner{
         if (this.stateToRender.length > 0){
             this.stateToRender.forEach(drawnObj => {
                 if (drawnObj.tool==="rect"){
-                    this.setRectangle(gl,colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
+                    this.setRectangle(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
                 }else if (drawnObj.tool==="triangle"){
-                    this.setTriangle(gl,colorLocation, drawnObj.pos[0], drawnObj[2],drawnObj[3]);
+                    this.setTriangle(gl, colorLocation, drawnObj.pos[0], drawnObj[2], drawnObj[3]);
+                }else if (drawnObj.tool==="line"){
+                    this.setLine(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1]);
+                }else if (drawnObj.tool==="ellipse"){
+                    this.setEllipse(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
                 }
             })
         }
@@ -159,13 +163,53 @@ export default class WglRunner{
         gl.drawArrays(primitiveType, offset, count);
     };
 
-    setLine(gl, x1, y1, x2, y2, context={}){
+    setLine(gl, colorLocation, x1, y1, x2, y2, context={}){
         // https://community.khronos.org/t/simple-tutorial-needed-how-to-draw-a-line/2664/4
         // https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm
 
     };
 
     setFreeDraw(gl, vertices, context={}){
+        // endless vertices connected. 
 
     };
+
+    setEllipse(gl, colorLocation, x1, y1, x2, y2, context={}){
+        // https://www.youtube.com/watch?v=S0QZJgNTtEw
+        // https://www.gamedev.net/forums/topic/69729-draw-ellipse-in-opengl/
+        // https://community.khronos.org/t/how-to-draw-an-oval/13428/
+        // Array construction is a good candidate for replacement by WASM
+        let degreeToRadian = Math.PI/180.0;
+        let originX = (x2+x1)/2;
+        let originY = (y2+y1)/2;
+        let radiusX = Math.abs((x2-x1)/2);
+        let radiusY = Math.abs((y2-y1)/2);
+        let vertices = []
+        for(let i=0; i<=360; i++){
+            let radian = i * degreeToRadian;
+            let vertex1 = [
+                Math.cos(radian) * radiusX + originX, Math.sin(radian) * radiusY + originY
+            ];
+            let vertex2 = [
+                originX, originY
+            ]
+            vertices.push(...vertex1);
+            vertices.push(...vertex2);
+        }
+
+        // Add vertices into the buffer
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+        // Set a random color.
+        gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+            
+        // Draw the rectangle.
+        var primitiveType = gl.TRIANGLE_STRIP;
+        var offset = 0;
+        var count = vertices.length / 2;
+        gl.drawArrays(primitiveType, offset, count);
+        // Gotta translate the circle to the position it was drawn in.
+
+
+    }
 }

@@ -11,8 +11,11 @@ export const slice = createSlice({
     selectATool: (state, action) => {
         let toolToSelect = action.payload;
         state.tool = toolToSelect;
-        if (toolToSelect === "line" || toolToSelect === "rect"){
-            state.vertices = 2;
+        if (toolToSelect === "line" ||
+            toolToSelect === "rect" || 
+            toolToSelect === "ellipse")
+            {
+              state.vertices = 2;
         }
         if (toolToSelect === "select"){
             state.vertices = 0;
