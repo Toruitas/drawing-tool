@@ -102,13 +102,13 @@ export default class WglRunner{
         if (this.stateToRender.length > 0){
             this.stateToRender.forEach(drawnObj => {
                 if (drawnObj.tool==="rect"){
-                    this.setRectangle(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
+                    this.setRectangle(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }else if (drawnObj.tool==="triangle"){
-                    this.setTriangle(gl, colorLocation, drawnObj.pos[0], drawnObj[2], drawnObj[3]);
+                    this.setTriangle(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }else if (drawnObj.tool==="line"){
-                    this.setLine(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
+                    this.setLine(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }else if (drawnObj.tool==="ellipse"){
-                    this.setEllipse(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
+                    this.setEllipse(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }
             })
         }
@@ -125,7 +125,11 @@ export default class WglRunner{
     };
 
     // Fill the buffer with the values that define a rectangle.
-    setRectangle(gl, colorLocation, x1, y1, x2, y2, context={}) {
+    setRectangle(gl, colorLocation, pos, context={}) {
+        let x1 = pos[0];
+        let y1 = pos[1];
+        let x2 = pos[2];
+        let y2 = pos[3];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
             x1, y1,
             x2, y1,
@@ -138,8 +142,9 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        let color = Math.max(((x2+x1)/2)/gl.canvas.width, ((y2+y1)/2)/gl.canvas.height);
-        gl.uniform4f(colorLocation, 0, 0, 1, 1);
+        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
+
+        gl.uniform4f(colorLocation, ...color);
             
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
@@ -148,8 +153,15 @@ export default class WglRunner{
         gl.drawArrays(primitiveType, offset, count);
     };
 
-    setTriangle(gl, colorLocation, x1, y1, x2, y2, x3, y3, context={}){
+    setTriangle(gl, colorLocation, pos, context={}){
         // Triangle must first draw a line from x1,y1 to x2,y2 before can draw a full triangle.
+        // Explicitly state x1...y3 for easily read code
+        let x1 = pos[0];
+        let y1 = pos[1];
+        let x2 = pos[2];
+        let y2 = pos[3];
+        let x3 = pos[4];
+        let y3 = pos[5];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
             x1, y1,
             x2, y2,
@@ -159,7 +171,9 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        gl.uniform4f(colorLocation, 1, 0, 0, 1);
+        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
+
+        gl.uniform4f(colorLocation, ...color);
             
         // Draw the triangle.
         var primitiveType = gl.TRIANGLES;
@@ -168,7 +182,7 @@ export default class WglRunner{
         gl.drawArrays(primitiveType, offset, count);
     };
 
-    setLine(gl, colorLocation, x1, y1, x2, y2, context={thickness:10}){
+    setLine(gl, colorLocation, pos, context={}){
         // Setting lineWidth doesn't work!
         // gl.lineWidth(25.0);
         // Instead just gotta draw a tiny rectangle, calculating with 90* angles where to put it, if thickness is >1.
@@ -178,13 +192,20 @@ export default class WglRunner{
         // https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm
         // https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
 
+        let x1 = pos[0];
+        let y1 = pos[1];
+        let x2 = pos[2];
+        let y2 = pos[3];
+
+        context.thickness = 2;
+        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
+
+        gl.uniform4f(colorLocation, ...color);
 
         if (context.thickness===1){
             // Draw the line with just a line if its thickness is just 1.
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1, y1, x2, y2]), gl.STATIC_DRAW);
 
-            let color = Math.max(x1/gl.canvas.width, y1/gl.canvas.height);
-            gl.uniform4f(colorLocation, color, color, color, color);
             var primitiveType = gl.LINES;
             var offset = 0;
             var count = 2;
@@ -201,7 +222,6 @@ export default class WglRunner{
             // Third, given a thickness, calculate the adjustments for the endpoint
             let adjustX = Math.cos(angle)*context.thickness;
             let adjustY = Math.sin(angle)*context.thickness;
-            console.log(adjustX, adjustY);
             let x1a = x1 + adjustX;
             let y1a = y1 + adjustY;
             let x1b = x1 - adjustX;
@@ -220,8 +240,6 @@ export default class WglRunner{
                 x1a, y1a,
                 x1b, y1b
             ]), gl.STATIC_DRAW);
-
-            gl.uniform4f(colorLocation, 1, 1, 1, 1);
                 
             // Draw the rectangle.
             var primitiveType = gl.TRIANGLES;
@@ -232,16 +250,21 @@ export default class WglRunner{
         }
     };
 
-    setFreeDraw(gl, colorLocation, vertices, context={}){
+    setFreeDraw(gl, colorLocation, pos, context={}){
         // endless vertices connected. 
 
     };
 
-    setEllipse(gl, colorLocation, x1, y1, x2, y2, context={}){
+    setEllipse(gl, colorLocation, pos, context={}){
         // https://www.youtube.com/watch?v=S0QZJgNTtEw
         // https://www.gamedev.net/forums/topic/69729-draw-ellipse-in-opengl/
         // https://community.khronos.org/t/how-to-draw-an-oval/13428/
         // Array construction is a good candidate for replacement by WASM
+        let x1 = pos[0];
+        let y1 = pos[1];
+        let x2 = pos[2];
+        let y2 = pos[3];
+
         let degreeToRadian = Math.PI/180.0;
         let originX = (x2+x1)/2;
         let originY = (y2+y1)/2;
@@ -266,8 +289,9 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        let color = Math.max(radiusX/gl.canvas.width, radiusY/gl.canvas.height);
-        gl.uniform4f(colorLocation, color, color, color, color);
+        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
+
+        gl.uniform4f(colorLocation, ...color);
             
         // Draw the circle.
         var primitiveType = gl.TRIANGLE_STRIP;

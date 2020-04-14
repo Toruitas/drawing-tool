@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './Toolbox.module.scss';
 import {Tool} from "../tool/Tool";
+import ColorPicker from '../colorPicker/ColorPicker';
 
 // The Toolbox component is mostly stylistic. It holds all the tool components with their 
 // icons
@@ -18,6 +19,8 @@ export function Toolbox(){
             <Tool toolName={"rect"}></Tool>
             <Tool toolName={"ellipse"}></Tool>
             {/* todo: add a CLEAR tool which then re-selects the last tool. */}
+            <p className="panel-heading">Options</p>
+            <ColorPicker></ColorPicker>
         </nav>
     )
 }

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styles from './Canvas.module.scss';
 import {} from "./canvasSlice.js";
 import { selectSelectedTool, selectVertices} from "../tool/toolSlice";
+import { selectColor1 } from "../colorPicker/colorPickerSlice";
 // import init from "./GL1/.init";
 // import init from "./GL2F1/gl2f1";
 import WglRunner from "./GL4";
@@ -75,7 +76,10 @@ class Canvas extends Component{
             if (this.state.currentlyDrawing && this.state.currentlyDrawingShape != {}){
                 stateToRender.push({
                     tool:this.props.tool,
-                    pos: this.state.currentlyDrawingShape.tempPos
+                    pos: this.state.currentlyDrawingShape.tempPos,
+                    context:{
+                        color:this.props.color1
+                    }
                 });
             }
             // send list and GL to the WGL runner
@@ -139,6 +143,7 @@ class Canvas extends Component{
                 currentlyDrawing:true,
                 currentlyDrawingShape:{
                     tool: this.props.tool,
+                    color: this.props.color1,
                     tempPos:[
                         adjusted_coords.x,
                         adjusted_coords.y
@@ -157,11 +162,14 @@ class Canvas extends Component{
             // so we add the shape we just drew to the list of saved shapes
             // and clear the shape we're currently drawing.
             
-            if (savedPos.length>=this.props.selectVertices*2){ // 2 vertices * 2 xy coords
+            if (savedPos.length>=this.props.vertices*2){ // 2 vertices * 2 xy coords
                 let newShapesToDrawList = this.state.stateToRender.slice(0);  // copy the stateToRender rather than a ref
                 newShapesToDrawList.push({
                     tool:this.props.tool,
-                    pos: savedPos
+                    pos: savedPos,
+                    context:{
+                        color:this.props.color1
+                    }
                 })
                 this.setState({
                     stateToRender:newShapesToDrawList,
@@ -173,6 +181,7 @@ class Canvas extends Component{
                 this.setState({
                     currentlyDrawingShape:{
                         tool: this.props.tool,
+                        color: this.props.color1,
                         tempPos:[],
                         pos:savedPos
                     }
@@ -237,7 +246,8 @@ class Canvas extends Component{
 const mapStateToProps = state => {
     return {
         tool: selectSelectedTool(state),
-        selectVertices: selectVertices(state),
+        vertices: selectVertices(state),
+        color1: selectColor1(state)
     }
 };
 
