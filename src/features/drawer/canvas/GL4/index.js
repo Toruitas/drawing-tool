@@ -136,7 +136,10 @@ export default class WglRunner{
         ]), gl.STATIC_DRAW);
 
         // Set a random color.
-        gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        // Set a color based on major minor radii.
+        let colorRadius = Math.max(((x2+x1)/2)/gl.canvas.width, ((y2+y1)/2)/gl.canvas.height);
+        gl.uniform4f(colorLocation, colorRadius, colorRadius, colorRadius, colorRadius);
             
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
@@ -154,7 +157,10 @@ export default class WglRunner{
         ]), gl.STATIC_DRAW);
 
         // Set a random color.
-        gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        // Set a color based on major minor radii.
+        let colorRadius = Math.max(x1/gl.canvas.width, y1/gl.canvas.height);
+        gl.uniform4f(colorLocation, colorRadius, colorRadius, colorRadius, colorRadius);
             
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
@@ -169,7 +175,7 @@ export default class WglRunner{
 
     };
 
-    setFreeDraw(gl, vertices, context={}){
+    setFreeDraw(gl, colorLocation, vertices, context={}){
         // endless vertices connected. 
 
     };
@@ -201,7 +207,10 @@ export default class WglRunner{
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
         // Set a random color.
-        gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
+        // Set a color based on major minor radii.
+        let colorRadius = Math.max(radiusX/gl.canvas.width, radiusY/gl.canvas.height);
+        gl.uniform4f(colorLocation, colorRadius, colorRadius, colorRadius, colorRadius);
             
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLE_STRIP;
