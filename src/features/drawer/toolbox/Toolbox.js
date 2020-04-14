@@ -14,7 +14,7 @@ export function Toolbox(){
     return (
         <nav id="toolbox" className="panel">
             <p className="panel-heading">Pick a tool</p>
-            <Tool toolName={"select"}></Tool>
+            {/* <Tool toolName={"select"}></Tool> */}
             <Tool toolName={"line"}></Tool>
             <Tool toolName={"rect"}></Tool>
             <Tool toolName={"ellipse"}></Tool>

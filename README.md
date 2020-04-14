@@ -1,5 +1,5 @@
 # drawing-tool
-Final project for Msc Creative Coding 2. This project uses ReactJS as an interface for a WebGL and WebAssembly-based drawing tool, and Bulma as CSS framework. 
+Final project for Msc Creative Coding 2. This project uses ReactJS as an interface for a WebGL and WebAssembly-based drawing tool, and Bulma as CSS framework. It's very impressive how fast using WebGL is. 
 
 
 This just a first step in a tool I'd like to build which can design
@@ -33,10 +33,12 @@ The Canvas component can read the Redux state, and behave appropriately when a u
 
 It was a struggle to comprehend how to draw multiple user-drawn shapes with WebGL. What it came down to is that the ENTIRE WebGL program has to be re-initialized and re-rendered every single time the state updates. This is very very fast, so it's really not a problem at all.
 
+The math behind drawing a line and circle at a given (x,y) was non-obvious. Drawing with triangles!
+
 The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into local state, only to realize the bug was elsewhere, and there was never a problem copying the string in the first place.
 
 
-
+Please see my package.json to see which packages I used, pretty ordinary React with Redux project packages. The only "feature" package I used was `react-color` for an out-of-the-box color picker, which I could easily connect to the application state. I would like to go back later and roll my own version with more emphasis on palettes. 
 
 Credit for a lot of my WebGL learning goes to the following resources:
 * https://github.com/jonathanrydholm/webgl-boilerplate
