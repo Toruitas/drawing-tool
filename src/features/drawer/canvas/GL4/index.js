@@ -106,7 +106,7 @@ export default class WglRunner{
                 }else if (drawnObj.tool==="triangle"){
                     this.setTriangle(gl, colorLocation, drawnObj.pos[0], drawnObj[2], drawnObj[3]);
                 }else if (drawnObj.tool==="line"){
-                    this.setLine(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1]);
+                    this.setLine(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
                 }else if (drawnObj.tool==="ellipse"){
                     this.setEllipse(gl, colorLocation, drawnObj.pos[0], drawnObj.pos[1], drawnObj.pos[2], drawnObj.pos[3]);
                 }
@@ -138,8 +138,8 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        let colorRadius = Math.max(((x2+x1)/2)/gl.canvas.width, ((y2+y1)/2)/gl.canvas.height);
-        gl.uniform4f(colorLocation, colorRadius, colorRadius, colorRadius, colorRadius);
+        let color = Math.max(((x2+x1)/2)/gl.canvas.width, ((y2+y1)/2)/gl.canvas.height);
+        gl.uniform4f(colorLocation, color, color, color, color);
             
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
@@ -159,20 +159,80 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        let colorRadius = Math.max(x1/gl.canvas.width, y1/gl.canvas.height);
-        gl.uniform4f(colorLocation, colorRadius, colorRadius, colorRadius, colorRadius);
+        let color = Math.max(x1/gl.canvas.width, y1/gl.canvas.height);
+        gl.uniform4f(colorLocation, color, color, color, color);
             
-        // Draw the rectangle.
+        // Draw the triangle.
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
         var count = 3;
         gl.drawArrays(primitiveType, offset, count);
     };
 
-    setLine(gl, colorLocation, x1, y1, x2, y2, context={}){
+    setLine(gl, colorLocation, x1, y1, x2, y2, context={thickness:10}){
+        // Setting lineWidth doesn't work!
+        // gl.lineWidth(25.0);
+        // Instead just gotta draw a tiny rectangle, calculating with 90* angles where to put it, if thickness is >1.
+        // A good candidate for WASM
+        // References:
         // https://community.khronos.org/t/simple-tutorial-needed-how-to-draw-a-line/2664/4
         // https://www.tutorialspoint.com/webgl/webgl_modes_of_drawing.htm
+        // https://blog.scottlogic.com/2019/11/18/drawing-lines-with-webgl.html
 
+
+        if (context.thickness===1){
+            // Draw the line with just a line if its thickness is just 1.
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1, y1, x2, y2]), gl.STATIC_DRAW);
+
+            let color = Math.max(x1/gl.canvas.width, y1/gl.canvas.height);
+            gl.uniform4f(colorLocation, color, color, color, color);
+            var primitiveType = gl.LINES;
+            var offset = 0;
+            var count = 2;
+            gl.drawArrays(primitiveType, offset, count);
+        }else{
+            // with a greater thickness, we have to draw a rectangle after determining what the new corners are
+            // First, find the perpendicular line's slope
+            // let slope = (y2-y1)/(x2-x1);
+            // console.log("slope "+ slope);
+            // let perpendicularLineSlope = -1/slope;
+            // console.log("perpendicular slope "+perpendicularLineSlope);
+            // Second, find an angle to use for trig
+            let angle = Math.atan2(-(x2-x1),(y2-y1));  // reverse the x and y to represent the perpendicular slope
+            // Third, given a thickness, calculate the adjustments for the endpoint
+            let adjustX = Math.cos(angle)*context.thickness;
+            let adjustY = Math.sin(angle)*context.thickness;
+            console.log(adjustX, adjustY);
+            let x1a = x1 + adjustX;
+            let y1a = y1 + adjustY;
+            let x1b = x1 - adjustX;
+            let y1b = y1 - adjustY;
+
+            let x2a = x2 + adjustX;
+            let y2a = y2 + adjustY;
+            let x2b = x2 - adjustX;
+            let y2b = y2 - adjustY;
+            console.log(x1a, y1a, x2a, y2a);
+            console.log(x1b, y1b, x2b, y2b);
+            
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                x1a, y1a,
+                x2a, y2a,
+                x2b, y2b,
+                x2b, y2b,
+                x1a, y1a,
+                x1b, y1b
+            ]), gl.STATIC_DRAW);
+
+            gl.uniform4f(colorLocation, 1, 1, 1, 1);
+                
+            // Draw the rectangle.
+            var primitiveType = gl.TRIANGLES;
+            var offset = 0;
+            var count = 6;
+            gl.drawArrays(primitiveType, offset, count);
+
+        }
     };
 
     setFreeDraw(gl, colorLocation, vertices, context={}){
@@ -209,10 +269,10 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        let colorRadius = Math.max(radiusX/gl.canvas.width, radiusY/gl.canvas.height);
-        gl.uniform4f(colorLocation, colorRadius, colorRadius, colorRadius, colorRadius);
+        let color = Math.max(radiusX/gl.canvas.width, radiusY/gl.canvas.height);
+        gl.uniform4f(colorLocation, color, color, color, color);
             
-        // Draw the rectangle.
+        // Draw the circle.
         var primitiveType = gl.TRIANGLE_STRIP;
         var offset = 0;
         var count = vertices.length / 2;
