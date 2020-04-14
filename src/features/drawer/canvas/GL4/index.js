@@ -139,7 +139,7 @@ export default class WglRunner{
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
         let color = Math.max(((x2+x1)/2)/gl.canvas.width, ((y2+y1)/2)/gl.canvas.height);
-        gl.uniform4f(colorLocation, color, color, color, color);
+        gl.uniform4f(colorLocation, 0, 0, 1, 1);
             
         // Draw the rectangle.
         var primitiveType = gl.TRIANGLES;
@@ -159,8 +159,7 @@ export default class WglRunner{
         // Set a random color.
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
-        let color = Math.max(x1/gl.canvas.width, y1/gl.canvas.height);
-        gl.uniform4f(colorLocation, color, color, color, color);
+        gl.uniform4f(colorLocation, 1, 0, 0, 1);
             
         // Draw the triangle.
         var primitiveType = gl.TRIANGLES;
@@ -212,8 +211,6 @@ export default class WglRunner{
             let y2a = y2 + adjustY;
             let x2b = x2 - adjustX;
             let y2b = y2 - adjustY;
-            console.log(x1a, y1a, x2a, y2a);
-            console.log(x1b, y1b, x2b, y2b);
             
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
                 x1a, y1a,
