@@ -256,8 +256,11 @@ export default class WglRunner{
         // endless vertices connected
         // First have to connect them.
         // for fun, using triangle strips
+        // Creating a new array and drawing all from that is way way slower than just iterating and drawing bit by bit.
+        // Why? I do not know. I thought that feeding WebGL with the full array would be better for its parallelism, but it is not.
+        // I have retained the slower code, just in case I find out if there's a solution.
 
-        context.thickness = 2;
+        context.thickness = 1;
         let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
         gl.uniform4f(colorLocation, ...color);
         

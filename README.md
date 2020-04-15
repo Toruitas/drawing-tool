@@ -35,6 +35,10 @@ It was a struggle to comprehend how to draw multiple user-drawn shapes with WebG
 
 The math behind drawing a line and circle at a given (x,y) was non-obvious. Drawing with triangles! Especially drawing a LINE was far, far more complicated than expected. The WebGL API's lineWidth setting doesn't function cross-platform, so I had to turn line-drawing into a fancy rectangle-drawing tool. Trigonometry, amazing stuff! This was before getting into the pencil tool.
 
+The pencil tool is not as fast as I would like. I attempted 2 approaches. 
+1) Take the array of positions, build a new array based on that array, and put this new array which is ~4x the length of the original directly into WebGL to draw all at once. Surprisingly, this was very slow! I thought that it was better to put a lot of coordinates into WebGL all at once. 
+2) I take the original array, and draw a chunk of it as a time as I loop through it. This was faster, but not fast enough. Using this approach it's at a usable 30FPS, but React isn't passing through the coordinates quickly enough onMouseMove, as a result of its own rendering process, so with a swiftly moving mouse, vertices can be quite far apart. 
+
 This math will all go into Rust/WASM for faster execution.
 
 I've certainly grown a deeper appreciation for the complexity of drawing tools like Figma and Photoshop. No wonder the web versions of Photoshop and Illustrator are taking so long to come out.
