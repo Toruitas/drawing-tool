@@ -16,6 +16,8 @@ export const slice = createSlice({
             toolToSelect === "ellipse")
             {
               state.vertices = 2;
+        }else if (toolToSelect === "pencil"){
+          state.vertices = Infinity;
         }
         if (toolToSelect === "select"){
             state.vertices = 0;

@@ -15,7 +15,8 @@ export default function ToolIcon({toolName}){
                     select: <i className="fas fa-mouse-pointer" aria-hidden="true"></i>,
                     rect: <i className="fas fa-vector-square" aria-hidden="true"></i>,
                     line: <i className="fas fa-minus" aria-hidden="true"></i>,
-                    ellipse: <i className="fas fa-circle" aria-hidden="true"></i>
+                    ellipse: <i className="fas fa-circle" aria-hidden="true"></i>,
+                    pencil: <i className="fas fa-pencil-alt" aria-hidden="true"></i>
                 }[toolName]
         }
         </span>

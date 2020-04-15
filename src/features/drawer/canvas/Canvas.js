@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import styles from './Canvas.module.scss';
-import {} from "./canvasSlice.js";
 import { selectSelectedTool, selectVertices} from "../tool/toolSlice";
 import { selectColor1 } from "../colorPicker/colorPickerSlice";
 import { selectClearCanvas } from '../clearButton/clearButtonSlice';
@@ -31,6 +30,7 @@ class Canvas extends Component{
             canUseGL2:true,
             stateToRender:[],  // list of objects
             selecting:false,
+            mouseDown:false,
             currentlyDrawing:false,
             currentlyDrawingShape:{}, // obj w/ {tool:currentTool, pos: [x,y,x1,y1,...] coordinates}
         };
@@ -136,7 +136,26 @@ class Canvas extends Component{
     }
 
     handleMouseDown(event){
-        
+        let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY);
+        if(!this.state.currentlyDrawing && this.props.tool === "pencil"){
+            // add first vertex to the pencil drawing.
+            this.setState({
+                mouseDown:true,
+                currentlyDrawing:true,
+                currentlyDrawingShape:{
+                    tool: this.props.tool,
+                    color: this.props.color1,
+                    tempPos:[
+                        adjusted_coords.x,
+                        adjusted_coords.y
+                    ],
+                    pos:[
+                        adjusted_coords.x,
+                        adjusted_coords.y
+                    ]
+                }
+            });
+        }
     }
 
     handleMouseUp(event){
@@ -172,15 +191,17 @@ class Canvas extends Component{
                 }
             });
         }else if (this.state.currentlyDrawing) {
-            // Adding this coordinate to the saved list
-            let savedPos = this.state.currentlyDrawingShape.pos.slice(0);
-            savedPos.push(adjusted_coords.x, adjusted_coords.y);
-            // if current length == max vertices, end the draw as the shape is complete
-            // so we add the shape we just drew to the list of saved shapes
-            // and clear the shape we're currently drawing.
-            
-            if (savedPos.length>=this.props.vertices*2){ // 2 vertices * 2 xy coords
+            if(this.props.tool === "pencil"){
+                // mouse up is the end signal for the pencil tool, unlike other tools. This position should already have been captured by the move handler
+                let savedPos = this.state.currentlyDrawingShape.tempPos.slice(0);
                 let newShapesToDrawList = this.state.stateToRender.slice(0);  // copy the stateToRender rather than a ref
+                
+                // TODO: check length of array. Must >2
+                if (savedPos.length === 2){
+                    // If no second point, we can't draw anything. So we add a second point to make a dot.
+                    savedPos.push(savedPos[0]+1,savedPos[1]+1)
+                }
+
                 newShapesToDrawList.push({
                     tool:this.props.tool,
                     pos: savedPos,
@@ -188,40 +209,72 @@ class Canvas extends Component{
                         color:this.props.color1
                     }
                 })
+
                 this.setState({
+                    mouseDown:false,
                     stateToRender:newShapesToDrawList,
                     currentlyDrawing:false,
                     currentlyDrawingShape:{}
                 });
             }else{
-                // Otherwise, update the saved list of x,y coords with this one, and clear the temp positions.
-                this.setState({
-                    currentlyDrawingShape:{
-                        tool: this.props.tool,
-                        color: this.props.color1,
-                        tempPos:[],
-                        pos:savedPos
-                    }
-                });
+                // Adding this coordinate to the saved list
+                let savedPos = this.state.currentlyDrawingShape.pos.slice(0);
+                savedPos.push(adjusted_coords.x, adjusted_coords.y);
+                // if current length == max vertices, end the draw as the shape is complete
+                // so we add the shape we just drew to the list of saved shapes
+                // and clear the shape we're currently drawing.
+                
+                if (savedPos.length>=this.props.vertices*2){ // 2 vertices * 2 xy coords
+                    let newShapesToDrawList = this.state.stateToRender.slice(0);  // copy the stateToRender rather than a ref
+                    newShapesToDrawList.push({
+                        tool:this.props.tool,
+                        pos: savedPos,
+                        context:{
+                            color:this.props.color1
+                        }
+                    })
+                    this.setState({
+                        mouseDown:false,
+                        stateToRender:newShapesToDrawList,
+                        currentlyDrawing:false,
+                        currentlyDrawingShape:{}
+                    });
+                }else{
+                    // Otherwise, update the saved list of x,y coords with this one, and clear the temp positions.
+                    this.setState({
+                        mouseDown:false,
+                        currentlyDrawingShape:{
+                            tool: this.props.tool,
+                            color: this.props.color1,
+                            tempPos:[],
+                            pos:savedPos
+                        }
+                    });
+                }
             }
             
         }
+        this.setState({mouseDown:false});
     }
 
     handleMouseMove(event){
         // this handles rendering the "temporary" shape as the mouse is moved around
         // May need to adjust as setState can be async https://reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
         let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
-        // This is agnostic to whichever drawing tool is selected.
+        
         if (this.state.currentlyDrawing){
+            // This is agnostic to whichever drawing tool is selected.
             // get the saved coordinates
             let tempPos = this.state.currentlyDrawingShape.pos.slice(0);  // get a copy not a ref
+            if (this.props.tool==="pencil"){
+                tempPos = this.state.currentlyDrawingShape.tempPos.slice(0);  // pencil holds entire drawn arry in tempPos
+            }
             // add the temporary coordinates
             tempPos.push(adjusted_coords.x, adjusted_coords.y);
             // update the state
             this.setState({
                 currentlyDrawingShape:{
-                    tool: this.props.tool,
+                    // tool: this.props.tool,
                     tempPos: tempPos,
                     pos: this.state.currentlyDrawingShape.pos.slice(0)
                 }

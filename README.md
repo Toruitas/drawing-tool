@@ -33,10 +33,13 @@ The Canvas component can read the Redux state, and behave appropriately when a u
 
 It was a struggle to comprehend how to draw multiple user-drawn shapes with WebGL. What it came down to is that the ENTIRE WebGL program has to be re-initialized and re-rendered every single time the state updates. This is very very fast, so it's really not a problem at all.
 
-The math behind drawing a line and circle at a given (x,y) was non-obvious. Drawing with triangles!
+The math behind drawing a line and circle at a given (x,y) was non-obvious. Drawing with triangles! Especially drawing a LINE was far, far more complicated than expected. The WebGL API's lineWidth setting doesn't function cross-platform, so I had to turn line-drawing into a fancy rectangle-drawing tool. Trigonometry, amazing stuff! This was before getting into the pencil tool.
+
+This math will all go into Rust/WASM for faster execution.
+
+I've certainly grown a deeper appreciation for the complexity of drawing tools like Figma and Photoshop. No wonder the web versions of Photoshop and Illustrator are taking so long to come out.
 
 The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into local state, only to realize the bug was elsewhere, and there was never a problem copying the string in the first place.
-
 
 Please see my package.json to see which packages I used, pretty ordinary React with Redux project packages. The only "feature" package I used was `react-color` for an out-of-the-box color picker, which I could easily connect to the application state. I would like to go back later and roll my own version with more emphasis on palettes. 
 

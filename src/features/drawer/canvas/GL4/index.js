@@ -80,7 +80,7 @@ export default class WglRunner{
             positionAttributeLocation, size, type, normalize, stride, offset);
         
         // ################################################
-        // Draw loop below.
+        // Draw/render loop below.
         // Tell WebGL how to convert from clip space to pixels
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
         webglUtils.resizeCanvasToDisplaySize(gl.canvas);
@@ -109,6 +109,9 @@ export default class WglRunner{
                     this.setLine(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }else if (drawnObj.tool==="ellipse"){
                     this.setEllipse(gl, colorLocation, drawnObj.pos, drawnObj.context);
+                }else if(drawnObj.tool==="pencil"){
+                    
+                    // this.setPencil(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }
             })
         }
@@ -250,7 +253,7 @@ export default class WglRunner{
         }
     };
 
-    setFreeDraw(gl, colorLocation, pos, context={}){
+    setPencil(gl, colorLocation, pos, context={}){
         // endless vertices connected. 
 
     };

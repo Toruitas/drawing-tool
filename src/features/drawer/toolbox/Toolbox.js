@@ -19,6 +19,7 @@ export function Toolbox(){
             <Tool toolName={"line"}></Tool>
             <Tool toolName={"rect"}></Tool>
             <Tool toolName={"ellipse"}></Tool>
+            <Tool toolName={"pencil"}></Tool>
             <ClearButton></ClearButton>
             {/* todo: add a CLEAR tool which then re-selects the last tool. */}
             <p className="panel-heading">Options</p>
