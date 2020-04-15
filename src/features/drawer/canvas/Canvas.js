@@ -4,6 +4,8 @@ import styles from './Canvas.module.scss';
 import {} from "./canvasSlice.js";
 import { selectSelectedTool, selectVertices} from "../tool/toolSlice";
 import { selectColor1 } from "../colorPicker/colorPickerSlice";
+import { selectClearCanvas } from '../clearButton/clearButtonSlice';
+
 // import init from "./GL1/.init";
 // import init from "./GL2F1/gl2f1";
 import WglRunner from "./GL4";
@@ -32,6 +34,9 @@ class Canvas extends Component{
             currentlyDrawing:false,
             currentlyDrawingShape:{}, // obj w/ {tool:currentTool, pos: [x,y,x1,y1,...] coordinates}
         };
+
+        this.canvas = React.createRef();
+
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
         this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -39,7 +44,7 @@ class Canvas extends Component{
         this.reorientMousePos = this.reorientMousePos.bind(this);
         this.updateCanvasSize = this.updateCanvasSize.bind(this);
         this.renderCanvas = this.renderCanvas.bind(this);
-        this.canvas = React.createRef();
+        this.clearCanvas = this.clearCanvas.bind(this);        
     }
 
     componentDidMount(){
@@ -51,6 +56,7 @@ class Canvas extends Component{
 
     componentDidUpdate() {
         this.updateCanvasSize();
+        this.clearCanvas();
 
         this.renderCanvas(this.canvas.current);
     }
@@ -58,6 +64,17 @@ class Canvas extends Component{
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateDimensions);
       }
+
+      clearCanvas(){
+        if(this.props.clear){
+            this.setState({
+                stateToRender:[],
+                selecting:false,
+                currentlyDrawing:false,
+                currentlyDrawingShape:{}
+            })
+        }
+    }
 
     renderCanvas(canvas){
         // First, init the WebGL Manager
@@ -247,7 +264,8 @@ const mapStateToProps = state => {
     return {
         tool: selectSelectedTool(state),
         vertices: selectVertices(state),
-        color1: selectColor1(state)
+        color1: selectColor1(state),
+        clear: selectClearCanvas(state)
     }
 };
 
