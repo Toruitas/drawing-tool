@@ -138,7 +138,8 @@ class Canvas extends Component{
     handleMouseDown(event){
         let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY);
         if(!this.state.currentlyDrawing && this.props.tool === "pencil"){
-            // add first vertex to the pencil drawing.
+            // add first vertex to the pencil drawing. We add 2 pairs so that it's a dot at first.
+            let thickness = 2;
             this.setState({
                 mouseDown:true,
                 currentlyDrawing:true,
@@ -146,12 +147,12 @@ class Canvas extends Component{
                     tool: this.props.tool,
                     color: this.props.color1,
                     tempPos:[
-                        adjusted_coords.x,
-                        adjusted_coords.y
+                        adjusted_coords.x, adjusted_coords.y,
+                        adjusted_coords.x+thickness,  adjusted_coords.y+thickness
                     ],
                     pos:[
-                        adjusted_coords.x,
-                        adjusted_coords.y
+                        adjusted_coords.x, adjusted_coords.y,
+                        adjusted_coords.x+thickness,  adjusted_coords.y+thickness
                     ]
                 }
             });
@@ -195,12 +196,6 @@ class Canvas extends Component{
                 // mouse up is the end signal for the pencil tool, unlike other tools. This position should already have been captured by the move handler
                 let savedPos = this.state.currentlyDrawingShape.tempPos.slice(0);
                 let newShapesToDrawList = this.state.stateToRender.slice(0);  // copy the stateToRender rather than a ref
-                
-                // TODO: check length of array. Must >2
-                if (savedPos.length === 2){
-                    // If no second point, we can't draw anything. So we add a second point to make a dot.
-                    savedPos.push(savedPos[0]+1,savedPos[1]+1)
-                }
 
                 newShapesToDrawList.push({
                     tool:this.props.tool,

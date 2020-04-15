@@ -110,8 +110,7 @@ export default class WglRunner{
                 }else if (drawnObj.tool==="ellipse"){
                     this.setEllipse(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }else if(drawnObj.tool==="pencil"){
-                    
-                    // this.setPencil(gl, colorLocation, drawnObj.pos, drawnObj.context);
+                    this.setPencil(gl, colorLocation, drawnObj.pos, drawnObj.context);
                 }
             })
         }
@@ -254,7 +253,65 @@ export default class WglRunner{
     };
 
     setPencil(gl, colorLocation, pos, context={}){
-        // endless vertices connected. 
+        // endless vertices connected
+        // First have to connect them.
+        // for fun, using triangle strips
+
+        context.thickness = 2;
+        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
+        gl.uniform4f(colorLocation, ...color);
+        
+        // let verticesArray = [];
+        for (let i=0; i<=pos.length-4; i+=2){
+
+            let x1 = pos[i];
+            let y1 = pos[i+1];
+            let x2 = pos[i+2];
+            let y2 = pos[i+3];
+
+            if (context.thickness===1){
+                // Draw the line with just a line if its thickness is just 1.
+                // verticesArray.push(x1,y1, x2,y2);
+                var primitiveType = gl.LINES;
+                var count = 2;
+                var offset = 0;
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1,y1,x2,y2]), gl.STATIC_DRAW);
+                gl.drawArrays(primitiveType, offset, count);
+            }else{
+                let angle = Math.atan2(-(x2-x1),(y2-y1));
+                let adjustX = Math.cos(angle)*context.thickness;
+                let adjustY = Math.sin(angle)*context.thickness;
+                let x1a = x1 + adjustX;
+                let y1a = y1 + adjustY;
+                let x1b = x1 - adjustX;
+                let y1b = y1 - adjustY;
+
+                let x2a = x2 + adjustX;
+                let y2a = y2 + adjustY;
+                let x2b = x2 - adjustX;
+                let y2b = y2 - adjustY;
+
+                // verticesArray.push(x1a, y1a, x1b, y1b, x2a, y2a, x2b, y2b);
+                var primitiveType = gl.TRIANGLE_STRIP;
+                var count = 4;
+                var offset = 0;
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1a, y1a, x1b, y1b, x2a, y2a, x2b, y2b]), gl.STATIC_DRAW);
+                gl.drawArrays(primitiveType, offset, count);
+            }
+        }
+
+        // let coordsLength = pos.length/4;
+        // if (context.thickness===1){
+        //     var primitiveType = gl.LINES;
+        //     var count = 2*coordsLength;
+        // }else{
+        //     var primitiveType = gl.TRIANGLE_STRIP;
+        //     var count = 4*coordsLength;
+        // }
+        // var offset = 0;
+        // // then triangle strip for fun. 
+        // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verticesArray), gl.STATIC_DRAW);
+        // gl.drawArrays(primitiveType, offset, count);
 
     };
 
