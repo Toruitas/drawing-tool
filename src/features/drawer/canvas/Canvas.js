@@ -163,7 +163,7 @@ class Canvas extends Component{
         // add current shape to stateToRender
         // reset currentlyDrawing to an empty obj
         // Move tempPos to savedPos. Add to 
-        let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY);
+        let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
         if (this.props.tool === "select"){
             // Select what is being clicked.
             console.log("Replace this with a test for withinShape()")

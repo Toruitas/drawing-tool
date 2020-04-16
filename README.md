@@ -30,6 +30,7 @@ This is chronological.
 * ParcelJS's Rust -> WASM conversion breaks `Vec<T>`
 * Removed WASM in the end
 * Drawing tool works pretty alright! Same features as Blackboard Collab Ultra's streaming drawing tool!
+* Deployed on Zeit: https://drawing-tool.now.sh/
 
 Final functionality as of 16/4/2020:
 * Rectangle tool
@@ -81,7 +82,7 @@ Drawing with only a single (or worse, random) color is boring. I used the `react
 
 Having to refresh the window each time to get a fresh canvas is also boring. I added a canvas clearing tool so that starting over is easier.
 
-
+What's even more boring? Photos and a journal about a web tool. I deployed the project using Zeit to: https://drawing-tool.now.sh/ . Deployment with Zeit was super easy for this React project. It hooked right into the GitHub repo, built, and deployed. Wow. This is crazy cool, and way easier than all other deployments I've done.
 
 
 ---
