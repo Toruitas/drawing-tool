@@ -7,22 +7,21 @@ import {
     selectClearCanvas
 } from "./clearButtonSlice";
 
-// this component manages the clearing of the canvas
-
+// This component manages the clearing of the canvas when a user clicks the button.
 export function ClearButton(){
     const dispatch = useDispatch();
     const shouldClearCanvas = useSelector(selectClearCanvas);
 
     useEffect(()=>{
-        // after state has updated. Reset the clear to false.
+        // After state has updated, reset the clear flag to false.
         if (shouldClearCanvas){
             dispatch(resetClear());
         }
     })
 
     const clearAndResetCanvas = () =>{
-        // first set the signal for the Canvas to see and reset
-        // then, since we don't want to keep clearing, reset the variable
+        // First, set the state in Redux for the Canvas to see and clear the list of stateToRender
+        // Then, since we don't want to keep clearing, useEffect will trigger to reset the clear flag.
         dispatch(clearCanvas());
     }
 

@@ -42,12 +42,12 @@ export default class WglRunner{
     }
 
     renderCanvas(){
+        // Lots of this code is adapted from https://webgl2fundamentals.org/webgl/lessons/webgl-fundamentals.html
+
         // let canvas = document.querySelector(`#${this.id}`);
         let gl = this.gl;
-        // if (!gl) {
-        //     return;
-        // }
-        // currently we only have 1 program
+
+        // Currently we only have 1 program. Future version may need a program per shape.
         let program = webglUtils.createProgramFromSources(gl,
             [this.vertexShaderSource, this.fragmentShaderSource]);
         var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
@@ -99,6 +99,7 @@ export default class WglRunner{
         // pixels to clipspace in the shader
         gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
+        // If there are things to render, choose the appropriate shape-renderer to draw each thing.
         if (this.stateToRender.length > 0){
             this.stateToRender.forEach(drawnObj => {
                 if (drawnObj.tool==="rect"){
@@ -126,8 +127,8 @@ export default class WglRunner{
         return Math.floor(Math.random() * range)*posneg;
     };
 
-    // Fill the buffer with the values that define a rectangle.
     setRectangle(gl, colorLocation, pos, context={}) {
+        // Fill the buffer with the values that define a rectangle.
         let x1 = pos[0];
         let y1 = pos[1];
         let x2 = pos[2];
@@ -145,7 +146,6 @@ export default class WglRunner{
         // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
         // Set a color based on major minor radii.
         let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
-
         gl.uniform4f(colorLocation, ...color);
             
         // Draw the rectangle.
@@ -156,6 +156,7 @@ export default class WglRunner{
     };
 
     setTriangle(gl, colorLocation, pos, context={}){
+        // Unused, low-likelihood of actually being needed anyway.
         // Triangle must first draw a line from x1,y1 to x2,y2 before can draw a full triangle.
         // Explicitly state x1...y3 for easily read code
         let x1 = pos[0];
@@ -170,11 +171,8 @@ export default class WglRunner{
             x3, y3
         ]), gl.STATIC_DRAW);
 
-        // Set a random color.
-        // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
-        // Set a color based on major minor radii.
+        // Set a color from inputs.
         let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
-
         gl.uniform4f(colorLocation, ...color);
             
         // Draw the triangle.
@@ -199,9 +197,11 @@ export default class WglRunner{
         let x2 = pos[2];
         let y2 = pos[3];
 
+        // hardcode thickness for now, as the line-thickness selection component hasn't yet been coded
         context.thickness = 2;
-        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
 
+        // Set a color from inputs.
+        let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
         gl.uniform4f(colorLocation, ...color);
 
         if (context.thickness===1){
@@ -213,17 +213,15 @@ export default class WglRunner{
             var count = 2;
             gl.drawArrays(primitiveType, offset, count);
         }else{
-            // with a greater thickness, we have to draw a rectangle after determining what the new corners are
-            // First, find the perpendicular line's slope
-            // let slope = (y2-y1)/(x2-x1);
-            // console.log("slope "+ slope);
-            // let perpendicularLineSlope = -1/slope;
-            // console.log("perpendicular slope "+perpendicularLineSlope);
-            // Second, find an angle to use for trig
-            let angle = Math.atan2(-(x2-x1),(y2-y1));  // reverse the x and y to represent the perpendicular slope
-            // Third, given a thickness, calculate the adjustments for the endpoint
+            // With a greater thickness, we have to draw a rectangle after determining what the new corners are
+            // First, find an angle for the PERPENDICULAR line to use for trig
+            // Normally is Math.atan2((y2-y1),(x2-x1)).
+            // Reverse the x and y positions to represent the perpendicular slope
+            let angle = Math.atan2(-(x2-x1),(y2-y1)); 
+            // Second, given a thickness, calculate the adjustments for the endpoint
             let adjustX = Math.cos(angle)*context.thickness;
             let adjustY = Math.sin(angle)*context.thickness;
+            // Third, create new (x,y) pairs for the 4 corners representing the vertices of the line.
             let x1a = x1 + adjustX;
             let y1a = y1 + adjustY;
             let x1b = x1 - adjustX;
@@ -243,7 +241,7 @@ export default class WglRunner{
                 x1b, y1b
             ]), gl.STATIC_DRAW);
                 
-            // Draw the rectangle.
+            // Draw the line.
             var primitiveType = gl.TRIANGLES;
             var offset = 0;
             var count = 6;
@@ -253,12 +251,13 @@ export default class WglRunner{
     };
 
     setPencil(gl, colorLocation, pos, context={}){
-        // endless vertices connected
+        // Endless vertices connected
         // First have to connect them.
-        // for fun, using triangle strips
+        // This time, using triangle strips. Although could have used the same method in setRect
+
         // Creating a new array and drawing all from that is way way slower than just iterating and drawing bit by bit.
-        // Why? I do not know. I thought that feeding WebGL with the full array would be better for its parallelism, but it is not.
-        // I have retained the slower code, just in case I find out if there's a solution.
+        // Why? I thought that feeding WebGL with the full array would be better for its parallelism, but it is not.
+        // I have retained the slower code commented out below, just in case I find out if there's a solution. It's probably the JS array construction.
 
         context.thickness = 2;
         let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
@@ -320,10 +319,13 @@ export default class WglRunner{
     };
 
     setEllipse(gl, colorLocation, pos, context={}){
+        // To draw a circle, draw triangles which all have the center of the circle as one of the vertices.
+        // Can avoid using translation matrices by multiplying vertice values by the radius and adding the origin.
+        // Translation may be faster, worth exploring in a future version.
+
         // https://www.youtube.com/watch?v=S0QZJgNTtEw
         // https://www.gamedev.net/forums/topic/69729-draw-ellipse-in-opengl/
         // https://community.khronos.org/t/how-to-draw-an-oval/13428/
-        // Array construction is a good candidate for replacement by WASM
         let x1 = pos[0];
         let y1 = pos[1];
         let x2 = pos[2];
@@ -350,11 +352,8 @@ export default class WglRunner{
         // Add vertices into the buffer
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-        // Set a random color.
-        // gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
-        // Set a color based on major minor radii.
+        // Set a color from inputs
         let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
-
         gl.uniform4f(colorLocation, ...color);
             
         // Draw the circle.
@@ -362,8 +361,5 @@ export default class WglRunner{
         var offset = 0;
         var count = vertices.length / 2;
         gl.drawArrays(primitiveType, offset, count);
-        // Gotta translate the circle to the position it was drawn in.
-
-
     }
 }

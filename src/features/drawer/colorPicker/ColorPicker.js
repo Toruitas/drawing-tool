@@ -6,6 +6,7 @@ import {
     updateColor
 } from "./colorPickerSlice";
 
+// This React class component wraps the "react-color" component and connects it to the Redux store, and thus the rest of the app.
 class ConnectedColorPicker extends React.Component {
     constructor(props){
         super(props);

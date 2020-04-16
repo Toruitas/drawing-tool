@@ -4,19 +4,13 @@ import styles from './Canvas.module.scss';
 import { selectSelectedTool, selectVertices} from "../tool/toolSlice";
 import { selectColor1 } from "../colorPicker/colorPickerSlice";
 import { selectClearCanvas } from '../clearButton/clearButtonSlice';
-
-// import init from "./GL1/.init";
-// import init from "./GL2F1/gl2f1";
 import WglRunner from "./GL4";
-// This component will manage:
-// Click events
-// Communication with WASM
-// Communication with WebGL
-// The actual canvas is contained here, as well. 
-// Uses react component, not hooks, as it's a bit complicated.
 
-// Click events may go to Rust, may go directly to WebGL. 
 
+// The Canvas component reads the state from other components (toolbox, color selector, clear canvas, etc...) via Redux.
+// On user mouse interaction on the canvas, it performs the corresponding action on mouseDown, mouseUp, and mouseMove.
+// Every time a coordinate pair is added to the list of stateToRender, stateToRender is send to the WglRunner, which takes the list
+// and renders it.
 
 class Canvas extends Component{
     // https://reactjs.org/docs/react-component.html
@@ -66,6 +60,8 @@ class Canvas extends Component{
       }
 
       clearCanvas(){
+        // When Redux state says clear, this deletes everything in the stateToRender and resets all other related state variables.
+        // Then, the next WebGL render will have nothing to show. Just blank!
         if(this.props.clear){
             this.setState({
                 stateToRender:[],
@@ -109,7 +105,8 @@ class Canvas extends Component{
     updateDimensions () {
         // Fullscreen the canvas
         // Re-set the origin to the center of the screen
-        this.setState({width:0, height:0})  // for some reason this is needed to get it to shrink
+        // Why origin at center of screen? I plan on making it an infinite canvas in the future. (0,0) in the upper left won't work for that.
+        this.setState({width:0, height:0})  // The resize listener is a bit "deaf," for some reason this seems to help.
         const rectangle = this.canvas.current.parentNode.getBoundingClientRect();
         this.setState({
              width: rectangle.width, 
@@ -132,10 +129,14 @@ class Canvas extends Component{
     }
 
     handleEscape(event){
-        // when esc is hit, reset selecting, currentlyDrawing, currentlyDrawingShape, tempPos
+        // Todo: When ESC key is pressed, reset selecting, currentlyDrawing, currentlyDrawingShape, tempPos, etc.
+        // This is intended to keep the objects in stateToRender, but remove that of currentlyDrawingShape
     }
 
     handleMouseDown(event){
+        // This only does anything when the pencil tool is selected. The pencil tool keeps drawing while the mouse button is pressed.
+        // This adds the first coordinate pairs for the pencil tool.
+
         let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX,event.nativeEvent.offsetY);
         if(!this.state.currentlyDrawing && this.props.tool === "pencil"){
             // add first vertex to the pencil drawing. We add 2 pairs so that it's a dot at first.
@@ -160,6 +161,9 @@ class Canvas extends Component{
     }
 
     handleMouseUp(event){
+        // Handles the coordinate pairs on most shapes, not pencil.
+        // Will either start a shape, or complete a shape and add it to the saved list.
+
         // add current shape to stateToRender
         // reset currentlyDrawing to an empty obj
         // Move tempPos to savedPos. Add to 
@@ -253,18 +257,18 @@ class Canvas extends Component{
     }
 
     handleMouseMove(event){
-        // this handles rendering the "temporary" shape as the mouse is moved around
-        // May need to adjust as setState can be async https://reactjs.org/docs/state-and-lifecycle.html#state-updates-may-be-asynchronous
+        // This handles rendering the "temporary" shape as the mouse is moved around.
         let adjusted_coords = this.reorientMousePos(event.nativeEvent.offsetX, event.nativeEvent.offsetY);
         
         if (this.state.currentlyDrawing){
             // This is agnostic to whichever drawing tool is selected.
-            // get the saved coordinates
+            // Get the saved coordinates from the start of the shape
             let tempPos = this.state.currentlyDrawingShape.pos.slice(0);  // get a copy not a ref
+            // The pencil holds entire drawn arry in tempPos, unlike other shapes.  
             if (this.props.tool==="pencil"){
-                tempPos = this.state.currentlyDrawingShape.tempPos.slice(0);  // pencil holds entire drawn arry in tempPos
+                tempPos = this.state.currentlyDrawingShape.tempPos.slice(0);  
             }
-            // add the temporary coordinates
+            // add the temporary coordinates to the array
             tempPos.push(adjusted_coords.x, adjusted_coords.y);
             // update the state
             this.setState({
@@ -280,7 +284,6 @@ class Canvas extends Component{
     reorientMousePos(x,y){
         // This method takes an (x,y) position in the canvas and converts it relative to the 
         // canvas orgin in the center of the screen
-        // currently WRONG!
         return {
             x: x - this.state.transX,
             y: (y  - this.state.transY)*-1

@@ -1,5 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 
+
+// This is a slice of Redux state managing "state.clear" in the store.
 export const slice = createSlice({
     name:"clear",
     initialState:{

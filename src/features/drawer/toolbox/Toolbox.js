@@ -5,9 +5,9 @@ import {Tool} from "../tool/Tool";
 import {ClearButton} from "../clearButton/ClearButton";
 import ColorPicker from '../colorPicker/ColorPicker';
 
-// The Toolbox component is mostly stylistic. It holds all the tool components with their 
-// icons
-// Should be ok to use a hook
+// The Toolbox component is mostly stylistic. It holds all the tool components with their icons.
+// Completely stylistic, with no functionality.
+
 
 export function Toolbox(){
     const [collapsed, setCollapsed] = useState(false);

@@ -7,14 +7,14 @@ Taught by Professor Mick Grierson
 By me, Stuart Leitch!
 
 
-Final project for Msc Creative Coding 2. This project uses ReactJS as an interface for a WebGL and WebAssembly-based drawing tool, and Bulma as CSS framework. It's very impressive how fast using WebGL is. 
+Zlim Draw. Z represents a scribble, and "lim" since it's meant to be "slim" on the processor. My final project for Msc Creative Coding 2. This project uses ReactJS as an interface for a WebGL-based drawing tool, and Bulma as CSS framework. It's very impressive how fast rendering WebGL is. 
 
 This just a first step in a tool I'd like to build which can design
 1) Layout
 2) Components (probably low-code not no-code)
 3) Free Draw
 
-for purposes such as Art, Websites, or Marketing Materials. Anything that needs different levels of structure or freedom but is in the end one complete thing.
+for purposes such as Art, Websites, or Marketing Materials. Anything that needs different levels of structure or freedom but is in the end one complete thing. Hopefully someone can make amazing work with it, now or in the future feature-rich version!
 
 The intent behind those tools is that currently it's a bit tough to manage the three different layers of design. Fantastic single-use tools exist. Freedrawing? Photoshop, but do not use it for components. Layouts? Try Figma, but it's not good at freedrawing. Components? Good luck finding one to begin with. Having worked plenty with designers, and recognizing that oftentimes too much time is wasted going up and down a chain of specialized tools, I want to build a single that has a natural interaction between these aspects of its personality, so that more designer personality can shine through.
 
@@ -36,7 +36,7 @@ This is chronological.
 * React + Redux perfect project use case, boostrapped with Create React App
 * WebGL drawing multiple and new shapes hard to grok, but grokked in the end
 * ParcelJS's Rust -> WASM conversion breaks `Vec<T>`
-* Removed WASM in the end, in a major disappointment
+* Removed WASM for this version, in a major disappointment
 * Drawing tool works pretty alright! Same features as Blackboard Collab Ultra's streaming drawing tool!
 * Deployed on Zeit: https://drawing-tool.now.sh/
 
@@ -50,7 +50,7 @@ Final functionality as of 16/4/2020:
 
 This project originally envisioned relying to a much heavier degree to WebAssembly, either using [Emscripten](https://emscripten.org/) to transpile C/C++ to WebAssembly or Rust's (wasm-pack and wasm-bindgen)[https://rustwasm.github.io/]. I managed to get some very simple C transpiled into WASM with Emscripten, merely add and subtract, as test cases to see how to import them into a React project.
 
-The default packer for a JS project is Webpack, currently on version 4. It does not support importing `.wasm` files. 
+The default packer for a React project is Webpack, currently on version 4. It does not support importing `.wasm` files. 
 
 Luckily, Webpack 5 does support it. To install it was simple enough, `npm install webpack@beta`. Afterwards, in a single, vanilla JS module, I could use something like `import await { add, subtract } from "./math.js"` and it would work. Great. [Sourcecode](https://github.com/Toruitas/webpack5wasm)
 
@@ -113,7 +113,7 @@ To solve the memory issue, the likely solution would be to use the approach from
 
 What's even more boring? Photos and a journal about a web tool. I deployed the project using Zeit to: https://drawing-tool.now.sh/ . Deployment with Zeit was super easy for this React project. It hooked right into the GitHub repo, built, and deployed. Wow. This is crazy cool, and way easier than all other deployments I've done. I see potential for Zeit + React + some sort of content API for quick web projects.
 
-*The final deployment:*
+**The final deployment:**
 ![Drawing online](/worklog/2020-04-16_final_deployment.png)
 
 
@@ -130,3 +130,9 @@ And the following for Rust/WASM:
 * https://rustwasm.github.io/docs/book/game-of-life/introduction.html 
 * https://doc.rust-lang.org/book/ 
 * https://github.com/maxbittker/sandspiel 
+
+Icons from FontAwesome
+
+Initial project setup from [Create React App Template Redux](https://www.npmjs.com/package/cra-template-redux)
+
+Logo done sarcastically by my girlfriend [Molly Zhou](https://mollyzhou.com/), who cheekily did everything I told her to do, thus proving once again that clients should let the designer design rather than micromanage
