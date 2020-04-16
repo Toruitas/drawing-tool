@@ -260,7 +260,7 @@ export default class WglRunner{
         // Why? I do not know. I thought that feeding WebGL with the full array would be better for its parallelism, but it is not.
         // I have retained the slower code, just in case I find out if there's a solution.
 
-        context.thickness = 1;
+        context.thickness = 2;
         let color = [...context.color.slice(0,3).map((num)=>num/255),context.color[3]];
         gl.uniform4f(colorLocation, ...color);
         
@@ -272,7 +272,7 @@ export default class WglRunner{
             let x2 = pos[i+2];
             let y2 = pos[i+3];
 
-            if (context.thickness===1){
+            if (context.thickness===1.0){
                 // Draw the line with just a line if its thickness is just 1.
                 // verticesArray.push(x1,y1, x2,y2);
                 var primitiveType = gl.LINES;
@@ -299,6 +299,7 @@ export default class WglRunner{
                 var count = 4;
                 var offset = 0;
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1a, y1a, x1b, y1b, x2a, y2a, x2b, y2b]), gl.STATIC_DRAW);
+                // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
                 gl.drawArrays(primitiveType, offset, count);
             }
         }
