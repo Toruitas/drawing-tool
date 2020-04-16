@@ -8,7 +8,7 @@ This just a first step in a tool I'd like to build which can design
 
 for purposes such as Art, Websites, or Marketing Materials. Anything that needs different levels of structure or freedom but is in the end one complete thing.
 
-The intent behind those tools is that currently it's a bit tough to manage the three different layers of design. Fantastic single-use tools exist. Freedrawing? Photoshop, but do not use it for components. Layouts? Try Figma, but it's not good at freedrawing. Components? Good luck finding one to begin with. So, recognizing that oftentimes too much time is wasted going up and down a chain of specialized tools, I want to build a single that has a natural interaction.
+The intent behind those tools is that currently it's a bit tough to manage the three different layers of design. Fantastic single-use tools exist. Freedrawing? Photoshop, but do not use it for components. Layouts? Try Figma, but it's not good at freedrawing. Components? Good luck finding one to begin with. Having worked plenty with designers, and recognizing that oftentimes too much time is wasted going up and down a chain of specialized tools, I want to build a single that has a natural interaction between these aspects of its personality, so that more designer personality can shine through.
 
 This project deals with the Free Draw stage, as it seems like as the more difficult starting point.
 
@@ -25,10 +25,10 @@ This is chronological.
 * Learned some Rust for Rust -> WebAssembly
 * Babel doesn't like Webpack 5's `import await` syntax -> forked and upgraded it
 * Hard Drive Failed -> Started over
-* React + Redux perfect use case, boostrapped with Create React App
+* React + Redux perfect project use case, boostrapped with Create React App
 * WebGL drawing multiple and new shapes hard to grok, but grokked in the end
 * ParcelJS's Rust -> WASM conversion breaks `Vec<T>`
-* Removed WASM in the end
+* Removed WASM in the end, in a major disappointment
 * Drawing tool works pretty alright! Same features as Blackboard Collab Ultra's streaming drawing tool!
 * Deployed on Zeit: https://drawing-tool.now.sh/
 
@@ -64,11 +64,11 @@ The structure of the project is a React-Redux project. The Toolbox component on 
 
 ![Canvas and Toolbox](/worklog/2020-04-02_canvas_and_toolbox.png)
 
-The Canvas component can read the Redux state for tool and context, and behave appropriately when a user clicks on the canvas. All the mouseUp/mouseDown/mouseMove events are handled on the Canvas component. 
+The Canvas component can read the Redux state for tool and context, and behave appropriately when a user clicks on the canvas. All the `mouseUp`/`mouseDown`/`mouseMove` events are handled on the Canvas component. 
 
 The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into Canvas local state, only to realize the bug was a missing assignment elsewhere, and there was never a problem copying the string in the first place.
 
-Once I got the canvas (2d) and toolbox situated, I replaced the canvas(2d) with a Canvas(webgl2). However, my test for WebGL2 support failed! Not due to browser incompatibility, but due to my 10-year-old computer not having hardware which supports it. Wow!
+Once I got the canvas(2d) and toolbox situated, I replaced the canvas(2d) with a canvas(webgl2). However, my test for WebGL2 support failed! Not due to browser incompatibility, but due to my 10-year-old computer not having hardware which supports it. Wow! Back to WebGL1, until my new SSD arrived and main laptop was back in action, at which point I continued with WebGL2.
 
 ![Webgl2 test](/worklog/2020-04-03_webgl2_test.png)
 
@@ -112,7 +112,7 @@ What's even more boring? Photos and a journal about a web tool. I deployed the p
 ---
 
 
-Please see my package.json to see which packages I used, pretty ordinary React with Redux project packages. The only "feature" package I used was `react-color` for an out-of-the-box color picker, which I could easily connect to the application state. I would like to go back later and roll my own version with more emphasis on palettes. 
+Please see my [package.json](/package.json) to see which packages I used, pretty ordinary React with Redux project packages. The only "feature" package I used was `react-color` for an out-of-the-box color picker, which I could easily connect to the application state. I would like to go back later and roll my own version with more emphasis on palettes. 
 
 Credit for a lot of my WebGL learning goes to the following resources:
 * https://github.com/jonathanrydholm/webgl-boilerplate
