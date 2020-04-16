@@ -3,15 +3,18 @@ Final project for Msc Creative Coding 2. This project uses ReactJS as an interfa
 
 This just a first step in a tool I'd like to build which can design
 1) Layout
-2) Components
-3) Free draw
+2) Components (probably low-code not no-code)
+3) Free Draw
 
 for purposes such as Art, Websites, or Marketing Materials. Anything that needs different levels of structure or freedom but is in the end one complete thing.
 
-The intent behind those tools is that currently it's a bit tough to manage the three different layers of design. Fantastic single-use tools exist. Freedrawing? Photoshop, but do not use it for components. Layouts? Try Figma, but it's not good at freedrawing. Components? Good luck finding one to begin with. So, recognizing that oftentimes too much time is wasted going from one to another specialized tool, I want to build a single that has a natural interaction.
+The intent behind those tools is that currently it's a bit tough to manage the three different layers of design. Fantastic single-use tools exist. Freedrawing? Photoshop, but do not use it for components. Layouts? Try Figma, but it's not good at freedrawing. Components? Good luck finding one to begin with. So, recognizing that oftentimes too much time is wasted going up and down a chain of specialized tools, I want to build a single that has a natural interaction.
 
 This project deals with the Free Draw stage, as it seems like as the more difficult starting point.
 
+I've certainly grown a deeper appreciation for the complexity of drawing tools like Figma and Photoshop. No wonder the web versions of Photoshop and Illustrator are taking so long to come out. This stuff is tough. 
+
+Project URL: https://drawing-tool.now.sh/
 
 
 ## Project journal:
@@ -20,11 +23,21 @@ This is chronological.
 
 #### TL;DR:
 * Learned some Rust for Rust -> WebAssembly
+* Babel doesn't like Webpack 5's `import await` syntax -> forked and upgraded it
 * Hard Drive Failed -> Started over
-* React + Redux perfect use case
-* WebGL drawing multiple shapes hard to grok, but grokked in the end
-* ParcelJS's Rust -> WASM conversion breaks vectors
+* React + Redux perfect use case, boostrapped with Create React App
+* WebGL drawing multiple and new shapes hard to grok, but grokked in the end
+* ParcelJS's Rust -> WASM conversion breaks `Vec<T>`
 * Removed WASM in the end
+* Drawing tool works pretty alright! Same features as Blackboard Collab Ultra's streaming drawing tool!
+
+Final functionality as of 16/4/2020:
+* Rectangle tool
+* Ellipse tool
+* Line tool
+* Pencil tool
+* Color picker
+* Canvas clearer
 
 This project originally envisioned relying to a much heavier degree to WebAssembly, either using [Emscripten](https://emscripten.org/) to transpile C/C++ to WebAssembly or Rust's (wasm-pack and wasm-bindgen)[https://rustwasm.github.io/]. I managed to get some very simple C transpiled into WASM with Emscripten, merely add and subtract, as test cases to see how to import them into a React project.
 
@@ -50,7 +63,9 @@ The structure of the project is a React-Redux project. The Toolbox component on 
 
 The Canvas component can read the Redux state for tool and context, and behave appropriately when a user clicks on the canvas. All the mouseUp/mouseDown/mouseMove events are handled on the Canvas component. 
 
-It was a struggle to comprehend how to draw multiple user-drawn shapes with WebGL. What it came down to is that the ENTIRE WebGL program has to be re-initialized and re-rendered every single time the state updates. This is very very fast, so it's really not a problem at all. 
+The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into Canvas local state, only to realize the bug was a missing assignment elsewhere, and there was never a problem copying the string in the first place.
+
+It was a struggle to comprehend how to draw multiple user-drawn shapes with WebGL. What it came down to is that the ENTIRE WebGL program has to be re-initialized and re-rendered every single time the state updates. This is very very fast, so it's really not a problem at all. React naturally re-renders every time the state is updated, making it easy to trigger a WebGL re-render. 
 
 The math behind drawing a line and circle at a given (x,y) was non-intuitive. Drawing with triangles! Especially drawing a LINE was far, far more complicated than expected. The WebGL API's lineWidth setting doesn't function cross-platform, so I had to turn line-drawing into a fancy rectangle-drawing tool. Trigonometry, amazing stuff! This was before getting into the pencil tool.
 
@@ -60,13 +75,17 @@ The pencil tool is not as fast as I would like. I attempted 2 approaches.
 
 I originally planned on putting all the math in a Rust file for transpilation into WebAssembly. Regrettably, the Parcel.js packer's Rust-> WASM process is unreliable. In my experimentation, the resulting `.wasm` functions have memory issues whenever a `Vec<T>` is used. It could even be a function that only has an empty Vector. See the `test_vec` function [here](src/features/drawer/canvas/math/src/lib.rs) for an example that has the memory error, and the adjacent `add` which works fine. 
 
-To solve the memory issue, the likely solution would be to use the approach from the earlier Conway Game of Life tutorial, as it used `Vec<T>` without issue. I would move far more logic and all the WebGL into Rust, as much as possible. Since React's render cycle is also a limiting factor, I would also put the listeners for the mouse into Rust as well. The big question there would be how to get the React state into the canvas.
+To solve the memory issue, the likely solution would be to use the approach from the earlier Conway Game of Life tutorial, as it used `Vec<T>` without issue. I would move far more logic and all the WebGL into Rust, as much as possible. Since React's render cycle is also a limiting factor, I would also put the listeners for the mouse into Rust as well. The big question there would be how to get the React state into the canvas for information about user-selected tools and context like color or line-thickness. Perhaps I could expose an `update_rust_state` function to the React component which... updates the Rust state to the inputs. 
 
 Drawing with only a single (or worse, random) color is boring. I used the `react-color` package to add a color picker component to the toolbox, which updates the React state 
 
-I've certainly grown a deeper appreciation for the complexity of drawing tools like Figma and Photoshop. No wonder the web versions of Photoshop and Illustrator are taking so long to come out.
+Having to refresh the window each time to get a fresh canvas is also boring. I added a canvas clearing tool so that starting over is easier.
 
-The most ridiculous part of the project so far? I spent an entire day trying to figure out how to copy a string from Redux state into local state, only to realize the bug was a missing assignment elsewhere, and there was never a problem copying the string in the first place.
+
+
+
+---
+
 
 Please see my package.json to see which packages I used, pretty ordinary React with Redux project packages. The only "feature" package I used was `react-color` for an out-of-the-box color picker, which I could easily connect to the application state. I would like to go back later and roll my own version with more emphasis on palettes. 
 
